@@ -540,6 +540,78 @@ a:hover { color: var(--amber-hi); }
   .reel__toggle { bottom: 30px; }
 }
 
+/* ── tracking consent bar ─────────────────────────────────── */
+
+.cookie-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+.cookie-bar[hidden] { display: none; }
+
+.cookie-bar__card {
+  color-scheme: light;
+  width: 100%;
+  max-width: 620px;
+  background: var(--paper);
+  color: var(--ink-warm);
+  border-radius: 10px;
+  padding: 16px 16px 14px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .5);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cookie-bar__text {
+  margin: 0;
+  font: 500 12.5px/1.5 var(--display);
+  color: rgba(22, 18, 14, .72);
+}
+.cookie-bar__text strong {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: 800;
+  font-size: 13.5px;
+  color: var(--ink-warm);
+}
+
+.cookie-bar__actions { display: flex; gap: 8px; }
+
+.cookie-bar__btn {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 9px;
+  font: 800 12.5px/1 var(--display);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.cookie-bar__btn--solid { border: none; background: var(--rust); color: var(--paper); }
+.cookie-bar__btn--solid:hover { background: var(--rust-hi); }
+.cookie-bar__btn--ghost {
+  border: 1.5px solid rgba(22, 18, 14, .22);
+  background: transparent;
+  color: var(--ink-warm);
+}
+.cookie-bar__btn--ghost:hover { border-color: var(--ink-warm); }
+
+@media (min-width: 640px) {
+  .cookie-bar__card {
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+    max-width: 700px;
+    padding: 14px 16px;
+  }
+  .cookie-bar__actions { flex: none; }
+  .cookie-bar__btn { flex: none; padding: 0 18px; min-height: 42px; }
+}
+
 /* ── motion ────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -653,6 +725,20 @@ a:hover { color: var(--amber-hi); }
 </div>
 </div>
 
+<aside class="cookie-bar" id="cookie-bar" aria-label="Tracking consent" hidden>
+  <div class="cookie-bar__card">
+    <p class="cookie-bar__text">
+      <strong>Can we count the clicks?</strong>
+      We'd like to load Meta's pixel so we know which ads bring people here — it stores
+      cookies on your device. Decline and nothing on this page tracks you.
+    </p>
+    <div class="cookie-bar__actions">
+      <button type="button" class="cookie-bar__btn cookie-bar__btn--ghost" data-consent="denied">Decline</button>
+      <button type="button" class="cookie-bar__btn cookie-bar__btn--solid" data-consent="granted">Accept</button>
+    </div>
+  </div>
+</aside>
+
 <script>
 (function () {
   'use strict';
@@ -682,6 +768,60 @@ a:hover { color: var(--amber-hi); }
     sending:  'Sending…',
     button:   'Put me on the list'
   };
+
+  /* ── Meta pixel, behind consent ───────────────────────────
+     The pixel is the ONLY third-party request this page can make, and it
+     never fires until the visitor says yes. Meta's <noscript> fallback
+     image is deliberately left out: it would fire before any answer. */
+
+  var PIXEL_ID = '4098993507059369';
+  var CONSENT_KEY = 'toa-pixel-consent';
+
+  var remember = function (value) {
+    try { localStorage.setItem(CONSENT_KEY, value); } catch (e) { /* private mode */ }
+  };
+  var remembered = function () {
+    try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
+  };
+
+  var pixelLoaded = false;
+
+  var loadPixel = function () {
+    if (pixelLoaded || !PIXEL_ID) return;
+    pixelLoaded = true;
+    /* Meta's own snippet, untouched — it just never runs from the markup. */
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+      n.queue = []; t = b.createElement(e); t.async = !0;
+      t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', PIXEL_ID);
+    fbq('track', 'PageView');
+  };
+
+  var track = function (event) {
+    if (pixelLoaded && window.fbq) fbq('track', event);
+  };
+
+  var bar = document.getElementById('cookie-bar');
+  var answered = remembered();
+
+  if (!PIXEL_ID) { /* nothing to track, so nothing to ask — bar stays hidden */ }
+  else if (answered === 'granted') loadPixel();
+  else if (answered !== 'denied' && bar) bar.hidden = false;
+
+  if (bar) {
+    bar.addEventListener('click', function (event) {
+      var hit = event.target.closest('[data-consent]');
+      if (!hit) return;
+      remember(hit.dataset.consent);
+      bar.hidden = true;
+      if (hit.dataset.consent === 'granted') loadPixel();
+    });
+  }
 
   /* ── video: autoplay, with a real pause control ───────────── */
 
@@ -756,6 +896,7 @@ a:hover { color: var(--amber-hi); }
     var served = function () {
       title.textContent = 'Order in, ' + first + '.';
       ticket.dataset.state = 'done';
+      track('Lead');            // the event Meta can actually optimise towards
     };
 
     button.disabled = true;

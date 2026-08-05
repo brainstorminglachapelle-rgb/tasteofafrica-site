@@ -6,8 +6,9 @@ desktop is the full-bleed treatment the handoff suggested as a next step
 ("make the video full-bleed behind everything in 2a") rather than `2a`'s split
 column.
 
-No build step, no framework, no third-party runtime request. Open `index.html`
-and it works.
+No build step, no framework. Open `index.html` and it works. The only
+third-party request the page can ever make is the Meta pixel, and it stays
+unloaded until the visitor accepts — see **Tracking** below.
 
 ---
 
@@ -44,6 +45,26 @@ ConvertKit and Mailchimp's embedded endpoints work the same way. Fields sent:
 A hidden `_gotcha` honeypot silently drops bots.
 
 ---
+
+## Tracking
+
+The Meta pixel (`4098993507059369`) is wired in, **behind a consent bar**. Two
+constants at the top of the `<script>` control it: `PIXEL_ID` and `CONSENT_KEY`.
+
+- Nothing loads until the visitor clicks **Accept**. Before that, `fbq` does not
+  exist and no request goes to `connect.facebook.net` or `facebook.com`.
+- The answer is remembered in `localStorage` under `toa-pixel-consent`
+  (`granted` / `denied`). To see the bar again while testing:
+  `localStorage.removeItem('toa-pixel-consent')`, then reload.
+- On accept: `PageView`. On a completed signup: **`Lead`** — that is the event
+  Meta can optimise delivery towards, so use it as the conversion in Ads
+  Manager, not link clicks.
+- **Meta's `<noscript>` fallback image is deliberately left out.** It fires on
+  page load with no way to ask first, which is exactly what the consent bar
+  exists to prevent. The cost is that visitors with JavaScript off are not
+  counted — a rounding error, and they could not submit the form anyway.
+
+Emptying `PIXEL_ID` disables the whole thing, bar included.
 
 ## Deploying to GitHub Pages
 
@@ -85,7 +106,8 @@ CNAME  robots.txt  sitemap.xml  .nojekyll
 ### Fonts
 
 Self-hosted on purpose: no request leaves the visitor's browser for
-`fonts.gstatic.com`. Bricolage Grotesque is a variable font, so **one** 41 kB
+`fonts.gstatic.com`, whatever they answer on the consent bar.
+Bricolage Grotesque is a variable font, so **one** 41 kB
 file covers weights 500–800.
 
 To refresh them:
