@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Taste of Africa — a mobile cooking game. Join the waitlist.</title>
+<meta name="description" content="Juggle thieboudienne, mafé and poulet DG at once in a busy African kitchen. Prep, assemble, fire, plate — before the table walks out. Soft launch 2027 on iOS and Android. Join the waitlist.">
+<link rel="canonical" href="https://tasteofafrica.app/">
+<meta name="theme-color" content="#12100D">
+<meta name="color-scheme" content="dark">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Taste of Africa">
+<meta property="og:title" content="Table 4 is still waiting.">
+<meta property="og:description" content="A mobile cooking game set in a busy African kitchen. Prep, assemble, fire, plate — before the table walks out. Soft launch 2027.">
+<meta property="og:url" content="https://tasteofafrica.app/">
+<meta property="og:image" content="https://tasteofafrica.app/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A chef preparing food in a warm African kitchen, over the words Table 4 is still waiting.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Table 4 is still waiting.">
+<meta name="twitter:description" content="A mobile cooking game set in a busy African kitchen. Soft launch 2027.">
+<meta name="twitter:image" content="https://tasteofafrica.app/assets/og.jpg">
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/bricolage-grotesque-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-mono-500-latin.woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts.css">
+
+<style>
+/* ─────────────────────────────────────────────────────────────
+   Taste of Africa — waitlist one-pager
+   Design: Claude Design handoff, options 1c (mobile) + 2a (desktop)
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --ink:        #12100D;   /* page background          */
+  --ink-warm:   #16120E;   /* text on paper            */
+  --cream:      #F7F2E8;   /* text on ink              */
+  --paper:      #FBF6EC;   /* the waitlist ticket      */
+  --amber:      #E8A33D;   /* accent / logo mark       */
+  --amber-hi:   #F5B455;
+  --rust:       #B4451F;   /* primary action           */
+  --rust-hi:    #C9552C;
+
+  --display: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --gutter: 20px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--display);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a { color: var(--amber); text-decoration: none; }
+a:hover { color: var(--amber-hi); }
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 20;
+  padding: 12px 16px; background: var(--paper); color: var(--ink-warm);
+  font: 600 13px/1 var(--mono); border-radius: 0 0 8px 0;
+}
+.skip:focus { left: 0; color: var(--ink-warm); }
+
+/* ── shell ─────────────────────────────────────────────────── */
+
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+
+.shell {
+  width: 100%;
+  max-width: 430px;
+  padding: calc(22px + env(safe-area-inset-top)) var(--gutter)
+           calc(26px + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "masthead"
+    "reel"
+    "body"
+    "colophon";
+  gap: 20px;
+  align-content: start;
+}
+
+/* ── masthead ──────────────────────────────────────────────── */
+
+.masthead {
+  grid-area: masthead;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wordmark { display: flex; align-items: center; gap: 9px; }
+
+.wordmark__mark {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex: none;
+}
+
+.wordmark__text {
+  font: 800 12.5px/1 var(--display);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.launch-badge {
+  font: 500 10px/1 var(--mono);
+  letter-spacing: .1em;
+  color: rgba(247, 242, 232, .55);
+  text-align: right;
+}
+.launch-badge .badge-long { display: none; }
+
+/* ── video ─────────────────────────────────────────────────── */
+
+.reel {
+  grid-area: reel;
+  position: relative;
+}
+
+.reel__frame {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(247, 242, 232, .12);
+  background: #000;
+}
+
+.reel__video {
+  display: block;
+  width: 100%;
+  height: 268px;
+  object-fit: cover;
+  object-position: 50% 45%;
+  background: #000;
+}
+
+.reel__scrim {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 96px;
+  background: linear-gradient(180deg, rgba(18, 16, 13, 0), rgba(18, 16, 13, .9));
+  pointer-events: none;
+}
+
+.reel__label {
+  position: absolute; left: 16px; bottom: 14px;
+  font: 500 10.5px/1 var(--mono);
+  letter-spacing: .12em;
+  color: var(--amber);
+  pointer-events: none;
+}
+
+.reel__toggle {
+  position: absolute; right: 12px; bottom: 10px;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border: 1px solid rgba(247, 242, 232, .28);
+  border-radius: 50%;
+  background: rgba(18, 16, 13, .55);
+  color: var(--cream);
+  cursor: pointer;
+  padding: 0;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.reel__toggle:hover { border-color: rgba(247, 242, 232, .6); }
+.reel__toggle svg { width: 13px; height: 13px; fill: currentColor; }
+.reel__toggle .icon-play { display: none; }
+.reel__toggle[data-paused="true"] .icon-play { display: block; }
+.reel__toggle[data-paused="true"] .icon-pause { display: none; }
+
+/* ── body: lede + ticket ───────────────────────────────────── */
+
+.body {
+  grid-area: body;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.lede { min-width: 0; }
+
+.lede h1 {
+  margin: 0;
+  font: 800 34px/1.02 var(--display);
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+
+.lede p {
+  margin: 10px 0 0;
+  font: 500 14.5px/1.55 var(--display);
+  color: rgba(247, 242, 232, .66);
+  text-wrap: pretty;
+}
+
+/* recipe chips — desktop only, per design 2a */
+.chips { display: none; }
+
+/* ── the waitlist ticket ───────────────────────────────────── */
+
+.ticket {
+  /* the page is dark, but this card is paper — native inputs, checkboxes and
+     radios must render light or Chrome fills them with the dark UA colours */
+  color-scheme: light;
+  background: var(--paper);
+  color: var(--ink-warm);
+  border-radius: 8px;
+  padding: 20px 18px 18px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .35);
+}
+
+.ticket__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font: 600 10.5px/1 var(--mono);
+  letter-spacing: .14em;
+  color: rgba(22, 18, 14, .55);
+}
+
+.ticket__head h2 {
+  font: inherit;
+  letter-spacing: inherit;
+  margin: 0;
+}
+
+.ticket__perf {
+  height: 1px;
+  margin: 14px 0 16px;
+  background: repeating-linear-gradient(90deg, rgba(22, 18, 14, .35) 0 5px, transparent 5px 10px);
+}
+
+.form { display: flex; flex-direction: column; gap: 14px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+
+.field__label,
+.legend {
+  font: 600 9.5px/1 var(--mono);
+  letter-spacing: .14em;
+  color: rgba(22, 18, 14, .5);
+  text-transform: uppercase;
+  padding: 0;
+}
+
+.field input {
+  width: 100%;
+  padding: 13px;
+  border: 1.5px solid rgba(22, 18, 14, .16);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--ink-warm);
+  font: 500 16px var(--mono);   /* 16px keeps iOS from zooming on focus */
+  outline: none;
+}
+.field input::placeholder { color: rgba(22, 18, 14, .38); }
+.field input:focus { border-color: var(--ink-warm); }
+.field input:user-invalid { border-color: var(--rust); }
+
+.platform {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.platform__options { display: flex; gap: 8px; }
+
+.platform__opt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 46px;
+  border: 1.5px solid rgba(22, 18, 14, .16);
+  border-radius: 9px;
+  font: 600 13px/1 var(--mono);
+  cursor: pointer;
+}
+.platform__opt:hover { border-color: var(--ink-warm); }
+.platform__opt:has(input:checked) { border-color: var(--ink-warm); }
+.platform__opt:has(input:focus-visible) { outline: 2px solid var(--rust); outline-offset: 2px; }
+.platform__opt input { width: 16px; height: 16px; accent-color: var(--rust); margin: 0; }
+
+.consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font: 500 12px/1.45 var(--display);
+  color: rgba(22, 18, 14, .7);
+  cursor: pointer;
+  padding: 2px 0;
+}
+.consent input {
+  width: 18px; height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--rust);
+  flex: none;
+}
+
+.form__error {
+  font: 600 11.5px/1.4 var(--display);
+  color: var(--rust);
+}
+.form__error:empty { display: none; }
+
+.submit {
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  border-radius: 9px;
+  background: var(--rust);
+  color: var(--paper);
+  font: 800 14.5px/1 var(--display);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.submit:hover { background: var(--rust-hi); }
+.submit[disabled] { opacity: .6; cursor: progress; }
+
+/* honeypot — bots fill it, humans never see it */
+.trap {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.done {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px 0 4px;
+}
+.done__title { font: 800 20px/1.15 var(--display); }
+.done__body { font: 500 13.5px/1.5 var(--display); color: rgba(22, 18, 14, .65); }
+.done__stamp {
+  margin-top: 6px;
+  font: 600 10px/1 var(--mono);
+  letter-spacing: .14em;
+  color: rgba(22, 18, 14, .45);
+}
+
+.ticket[data-state="open"] .done,
+.ticket[data-state="done"] .form { display: none; }
+
+/* ── colophon ──────────────────────────────────────────────── */
+
+.colophon {
+  grid-area: colophon;
+  margin: 0;
+  font: 500 10.5px/1.4 var(--mono);
+  color: rgba(247, 242, 232, .48);
+  text-align: center;
+}
+.colophon .colophon-long { display: none; }
+
+/* ─────────────────────────────────────────────────────────────
+   Desktop — the clip fills the screen, everything else floats on top.
+   The source video is 784×470 (ratio 1.67), so a cover crop on a 16:10
+   window loses almost nothing — unlike the split column it replaces.
+   ───────────────────────────────────────────────────────────── */
+
+@media (min-width: 900px) {
+  :root { --gutter: 60px; }
+
+  .shell {
+    position: relative;
+    z-index: 1;
+    max-width: none;
+    padding: 0;
+    gap: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "masthead"
+      "body"
+      "colophon";
+    grid-template-rows: auto 1fr auto;
+  }
+
+  /* the footage sits behind everything; content layers must be lifted above it */
+  .reel { position: fixed; inset: 0; z-index: 0; }
+  .masthead, .body, .colophon { position: relative; z-index: 1; }
+
+  .reel__frame { position: absolute; inset: 0; border: none; border-radius: 0; }
+  .reel__video {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-position: 50% 42%;
+  }
+  .reel__scrim {
+    inset: 0;
+    height: auto;
+    background:
+      linear-gradient(180deg, rgba(18, 16, 13, .88) 0%, rgba(18, 16, 13, .34) 26%,
+                              rgba(18, 16, 13, .5) 52%, rgba(18, 16, 13, .93) 88%, #12100D 100%),
+      linear-gradient(90deg, rgba(18, 16, 13, .62) 0%, rgba(18, 16, 13, 0) 55%);
+  }
+  .reel__label {
+    left: auto;
+    right: calc(var(--gutter) + 48px);
+    bottom: 58px;
+    font-size: 11.5px;
+    letter-spacing: .14em;
+  }
+  .reel__toggle { right: var(--gutter); bottom: 48px; }
+
+  .masthead { padding: 46px var(--gutter) 0; }
+  .wordmark__mark { width: 32px; height: 32px; }
+  .wordmark__text { font-size: 16px; letter-spacing: .12em; }
+  .launch-badge { font-size: 12px; letter-spacing: .12em; }
+  .launch-badge .badge-short { display: none; }
+  .launch-badge .badge-long { display: inline; }
+
+  .body {
+    flex-direction: row;
+    align-items: flex-end;   /* headline and ticket share a baseline at the foot */
+    align-self: end;
+    gap: 52px;
+    padding: 40px var(--gutter) 30px;
+  }
+
+  .lede { flex: 1; max-width: 540px; }
+  .lede h1 {
+    font-size: clamp(48px, 5.2vw, 74px);
+    line-height: .96;
+    letter-spacing: -.03em;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, .5);
+  }
+  .lede h1 .break-mobile { display: none; }
+  .lede p {
+    margin-top: 22px;
+    font-size: 19px;
+    max-width: 470px;
+    color: rgba(247, 242, 232, .78);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 30px;
+    padding: 0;
+    list-style: none;
+  }
+  .chips li {
+    font: 500 12px/1 var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(247, 242, 232, .24);
+    color: rgba(247, 242, 232, .8);
+    background: rgba(18, 16, 13, .3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .ticket {
+    flex: none;
+    width: 384px;
+    border-radius: 10px;
+    padding: 26px 24px 24px;
+    box-shadow: 0 26px 64px rgba(0, 0, 0, .6);
+  }
+  .ticket__head { font-size: 11px; }
+  .ticket__perf { margin: 16px 0 18px; }
+  .form { gap: 15px; }
+  .field { gap: 7px; }
+  .field__label, .legend { font-size: 10px; }
+  .field input { padding: 13px 14px; font-size: 15px; }
+  .platform { gap: 7px; }
+  .platform__options { gap: 9px; }
+  .platform__opt { min-height: 44px; }
+  .consent { gap: 11px; font-size: 13px; }
+  .submit { min-height: 54px; font-size: 15px; }
+  .done__title { font-size: 24px; }
+  .done__body { font-size: 14.5px; }
+  .done__stamp { font-size: 10.5px; margin-top: 8px; }
+
+  .colophon {
+    padding: 0 var(--gutter) 46px;
+    text-align: left;
+    font-size: 12px;
+    color: rgba(247, 242, 232, .55);
+  }
+  .colophon .colophon-long { display: inline; }
+}
+
+/* Short desktop windows: tighten the margins rather than let the ticket
+   push the headline off screen. The clip is fixed, so scrolling is fine. */
+@media (min-width: 900px) and (max-height: 780px) {
+  .masthead { padding-top: 30px; }
+  .body { padding-block: 26px 20px; }
+  .colophon { padding-bottom: 30px; }
+  .lede h1 { font-size: clamp(42px, 4.4vw, 58px); }
+  .lede p { margin-top: 16px; font-size: 17px; }
+  .chips { margin-top: 20px; }
+  .reel__label { bottom: 40px; }
+  .reel__toggle { bottom: 30px; }
+}
+
+/* ── motion ────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+
+<body>
+<a class="skip" href="#waitlist">Skip to the waitlist form</a>
+
+<div class="page">
+<div class="shell">
+
+  <header class="masthead">
+    <div class="wordmark">
+      <span class="wordmark__mark" aria-hidden="true"></span>
+      <p class="wordmark__text">Taste of Africa</p>
+    </div>
+    <p class="launch-badge">
+      <span class="badge-short">SOFT LAUNCH 2027</span>
+      <span class="badge-long">SOFT LAUNCH 2027 · iOS &amp; ANDROID</span>
+    </p>
+  </header>
+
+  <div class="reel">
+    <div class="reel__frame">
+      <video
+        class="reel__video"
+        src="assets/intro.mp4"
+        poster="assets/poster.jpg"
+        preload="metadata"
+        muted loop playsinline autoplay
+        disablepictureinpicture
+        aria-label="Early gameplay: a chef prepping ingredients in a busy African kitchen"></video>
+      <div class="reel__scrim" aria-hidden="true"></div>
+      <p class="reel__label">EARLY GAMEPLAY</p>
+      <button class="reel__toggle" type="button" data-paused="false" aria-label="Pause the video">
+        <svg class="icon-pause" viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0h4v14H0zM8 0h4v14H8z"/></svg>
+        <svg class="icon-play" viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <div class="lede">
+      <h1>Table 4 is<br class="break-mobile"> still waiting.</h1>
+      <p>Juggle thieb, mafé and poulet DG at once in a busy African kitchen. More clients, more steps, less time — one missed plate and service falls apart.</p>
+      <ul class="chips">
+        <li>Thieboudienne</li>
+        <li>Mafé</li>
+        <li>Poulet DG</li>
+        <li>Ndolé</li>
+      </ul>
+    </div>
+
+    <section class="ticket" id="waitlist" data-state="open" aria-labelledby="ticket-title">
+      <div class="ticket__head">
+        <h2 id="ticket-title">WAITLIST TICKET</h2>
+        <span aria-hidden="true">#0001</span>
+      </div>
+      <div class="ticket__perf" aria-hidden="true"></div>
+
+      <form class="form" novalidate>
+        <label class="field">
+          <span class="field__label">First name</span>
+          <input name="first" type="text" required autocomplete="given-name" placeholder="Aminata">
+        </label>
+
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input name="email" type="email" required autocomplete="email" placeholder="you@email.com">
+        </label>
+
+        <fieldset class="platform">
+          <legend class="legend">Playing on</legend>
+          <div class="platform__options">
+            <label class="platform__opt"><input name="platform" type="radio" value="iOS">iOS</label>
+            <label class="platform__opt"><input name="platform" type="radio" value="Android">Android</label>
+          </div>
+        </fieldset>
+
+        <label class="consent">
+          <input name="consent" type="checkbox" value="yes">
+          <span>I want news about the game and a heads-up on launch day.</span>
+        </label>
+
+        <p class="trap" aria-hidden="true">
+          <label>Leave this field empty<input name="_gotcha" type="text" tabindex="-1" autocomplete="off"></label>
+        </p>
+
+        <p class="form__error" role="alert" aria-live="polite"></p>
+
+        <button class="submit" type="submit">Put me on the list</button>
+      </form>
+
+      <div class="done" role="status" aria-live="polite">
+        <p class="done__title">Order in.</p>
+        <p class="done__body">You're on the waitlist. We'll email you when the restaurant opens its doors.</p>
+        <p class="done__stamp">SERVED · THANK YOU</p>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="colophon">
+    tasteofafrica.app<span class="colophon-long"> · we only email about the game</span> · unsubscribe anytime
+  </p>
+
+</div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ════════════════════════════════════════════════════════════
+     ▼ THE ONE THING TO FILL IN BEFORE GOING LIVE ▼
+
+     Paste the Formspree form endpoint here. Create a form at
+     https://formspree.io → the endpoint looks like:
+
+       https://formspree.io/f/abcdwxyz
+
+     Buttondown, ConvertKit and Mailchimp all expose a plain POST
+     endpoint too — anything that accepts a form POST works, see README.
+     While this is empty the form refuses to submit and says so, so a
+     signup can never be silently dropped.
+     ════════════════════════════════════════════════════════════ */
+  var WAITLIST_ENDPOINT = '';
+
+  var COPY = {
+    consent:  "Tick the box and we're good to go.",
+    email:    'We need a real email address to reach you.',
+    name:     'A first name, so we know who is at the table.',
+    network:  "That didn't go through. Try again in a moment?",
+    offline:  'Looks like the connection dropped. Try again in a moment?',
+    unwired:  'The waitlist is not connected yet — set WAITLIST_ENDPOINT in index.html.',
+    sending:  'Sending…',
+    button:   'Put me on the list'
+  };
+
+  /* ── video: autoplay, with a real pause control ───────────── */
+
+  var video  = document.querySelector('.reel__video');
+  var toggle = document.querySelector('.reel__toggle');
+
+  if (video && toggle) {
+    var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    /* What the visitor wants, kept apart from what the video is doing right
+       now — the browser pauses playback on its own when the tab goes away,
+       and that must not be mistaken for someone hitting the pause button. */
+    var wantsPlaying = !calm.matches;
+
+    var sync = function () {
+      var paused = video.paused;
+      toggle.dataset.paused = paused ? 'true' : 'false';
+      toggle.setAttribute('aria-label', paused ? 'Play the video' : 'Pause the video');
+    };
+
+    var start = function () {
+      video.muted = true;                    // required for autoplay everywhere
+      var p = video.play();
+      if (p && p.catch) p.catch(function () { /* blocked: the poster + button stand in */ });
+    };
+
+    if (wantsPlaying) start(); else { video.autoplay = false; video.pause(); }
+
+    toggle.addEventListener('click', function () {
+      wantsPlaying = video.paused;
+      if (wantsPlaying) start(); else video.pause();
+    });
+    video.addEventListener('play', sync);
+    video.addEventListener('pause', sync);
+
+    // Some browsers stall the clip while the tab is away and never resume it.
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && wantsPlaying && video.paused) start();
+    });
+
+    sync();
+  }
+
+  /* ── waitlist form ────────────────────────────────────────── */
+
+  var ticket = document.getElementById('waitlist');
+  var form   = ticket.querySelector('.form');
+  var error  = ticket.querySelector('.form__error');
+  var button = ticket.querySelector('.submit');
+  var title  = ticket.querySelector('.done__title');
+
+  var fail = function (message, field) {
+    error.textContent = message;
+    if (field) field.focus();
+  };
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    error.textContent = '';
+
+    var data  = new FormData(form);
+    var first = (data.get('first') || '').toString().trim();
+    var email = (data.get('email') || '').toString().trim();
+
+    if (data.get('_gotcha')) return;                       // bot
+    if (!first)                        return fail(COPY.name, form.first);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return fail(COPY.email, form.email);
+    if (!data.get('consent'))          return fail(COPY.consent, form.consent);
+
+    if (!WAITLIST_ENDPOINT) return fail(COPY.unwired);
+
+    var served = function () {
+      title.textContent = 'Order in, ' + first + '.';
+      ticket.dataset.state = 'done';
+    };
+
+    button.disabled = true;
+    button.textContent = COPY.sending;
+
+    data.set('first', first);
+    data.set('email', email);
+    data.set('platform', (data.get('platform') || 'not specified').toString());
+    data.set('consent', 'yes');
+    data.set('_subject', 'Taste of Africa — new waitlist signup');
+    data.delete('_gotcha');
+
+    fetch(WAITLIST_ENDPOINT, {
+      method: 'POST',
+      body: data,
+      headers: { Accept: 'application/json' }
+    })
+      .then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        served();
+      })
+      .catch(function () {
+        button.disabled = false;
+        button.textContent = COPY.button;
+        fail(navigator.onLine === false ? COPY.offline : COPY.network);
+      });
+  });
+})();
+</script>
+</body>
+</html>
