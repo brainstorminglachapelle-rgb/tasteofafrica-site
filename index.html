@@ -1110,7 +1110,7 @@ a:hover { color: var(--amber-hi); }
 
       <div class="done" role="status" aria-live="polite">
         <p class="done__title" data-i18n="doneTitle">Order in.</p>
-        <p class="done__body" data-i18n="doneBody">You're on the waitlist. We'll email you when the restaurant opens its doors.</p>
+        <p class="done__body" data-i18n="doneBody">One last step: open the email we just sent and confirm. Then we'll write the day the restaurant opens its doors.</p>
         <p class="done__stamp" data-i18n="doneStamp">SERVED · THANK YOU</p>
       </div>
     </section>
@@ -1159,7 +1159,7 @@ a:hover { color: var(--amber-hi); }
      While the endpoint is empty the form refuses to submit and says so
      on screen, so a signup can never be silently dropped.
      ════════════════════════════════════════════════════════════ */
-  var WAITLIST_ENDPOINT = '';
+  var WAITLIST_ENDPOINT = 'https://assets.mailerlite.com/jsonp/2565278/forms/195326870943696122/subscribe';
   var WAITLIST_FORMAT = 'mailerlite';   // 'mailerlite' | 'plain'
 
   /* ── English / French ─────────────────────────────────────────
@@ -1200,7 +1200,7 @@ a:hover { color: var(--amber-hi); }
       sending:      'Sending…',
       doneTitle:    'Order in.',
       doneTitleName:'Order in, {name}.',
-      doneBody:     "You're on the waitlist. We'll email you when the restaurant opens its doors.",
+      doneBody:     "One last step: open the email we just sent and confirm. Then we'll write the day the restaurant opens its doors.",
       doneStamp:    'SERVED · THANK YOU',
       colophon:     'tasteofafrica.app<span class="colophon-long"> · we only email about the game</span> · unsubscribe anytime',
       cookieTitle:  'Can we count the clicks?',
@@ -1242,7 +1242,7 @@ a:hover { color: var(--amber-hi); }
       sending:      'Envoi…',
       doneTitle:    'Commande passée.',
       doneTitleName:'Commande passée, {name}.',
-      doneBody:     'Tu es sur la liste d’attente. On t’écrit dès que le restaurant ouvre ses portes.',
+      doneBody:     'Dernière étape : ouvre l’e-mail qu’on vient de t’envoyer et confirme. On t’écrit ensuite le jour où le restaurant ouvre ses portes.',
       doneStamp:    'SERVI · MERCI',
       colophon:     'tasteofafrica.app<span class="colophon-long"> · on n’écrit que pour parler du jeu</span> · désinscription à tout moment',
       cookieTitle:  'On peut compter les clics ?',

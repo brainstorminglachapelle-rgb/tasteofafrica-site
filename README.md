@@ -11,54 +11,47 @@ unloaded until the visitor accepts — see **Tracking** below.
 
 ---
 
-## Before going live — one thing to fill in
+## Where signups go
 
-The form does nothing until you paste an endpoint. Open `index.html`, find:
+Wired to **MailerLite**, verified end to end on 2026-08-09.
 
 ```js
-var WAITLIST_ENDPOINT = '';
+var WAITLIST_ENDPOINT = 'https://assets.mailerlite.com/jsonp/2565278/forms/195326870943696122/subscribe';
 var WAITLIST_FORMAT = 'mailerlite';   // 'mailerlite' | 'plain'
 ```
 
-**MailerLite** — create an embedded form, then
-*Forms → Embedded forms → your form → Overview → "Embed form to your website" →
-HTML tab*. Inside that snippet is a `<form action="…">`; that URL is the
-endpoint. Keep `WAITLIST_FORMAT` as `'mailerlite'` so the payload is namespaced
-the way MailerLite expects (`fields[name]`, `fields[email]`, plus `ml-submit`
-and `anticsrf`).
+Account `2565278`, form *Waitlist tasteofafrica.app*, subscribers land in the
+**Waitlist** group. The endpoint answers `{"success":true}` with CORS headers, so
+the page can tell a real success from a real failure — no guessing.
 
-**Formspree, Buttondown, ConvertKit, Mailchimp** — paste their endpoint and set
-`WAITLIST_FORMAT` to `'plain'`, which sends flat field names.
+| meaning          | sent as                | MailerLite field |
+|------------------|------------------------|------------------|
+| first name       | `fields[name]`         | Name (built-in)  |
+| email            | `fields[email]`        | Email            |
+| country, readable| `fields[country]`      | Country (built-in) |
+| ISO 3166-1 code  | `fields[country_code]` | Country code (custom) |
+| iOS / Android    | `fields[platform]`     | Platform (custom) |
 
-Whichever you pick, **send one real test signup and confirm it lands** before
-spending on ads. These embedded endpoints sometimes answer without CORS headers,
-in which case the browser reports a failure even though the subscriber was
-created — the page would then show an error to a visitor who did get added.
-That is the one failure mode worth checking by hand.
+plus `ml-submit=1` and `anticsrf=true`, which the endpoint requires. `Country
+code` and `Platform` were created by hand under *Subscribers → Fields*; delete
+them and those two values are silently dropped.
 
-While the constant is empty the form **refuses to submit** and says so on screen,
-so a signup can never be silently dropped.
+**Segment on `Country code`, never on `Country`.** The readable name is sent in
+whatever language the visitor was reading, so the Country column legitimately
+mixes `Sénégal` and `Senegal`. The code is the stable key.
 
-The page sends a normal `multipart/form-data` POST and expects any 2xx back, so
-Buttondown (`https://buttondown.email/api/emails/embed-subscribe/<user>`),
-ConvertKit and Mailchimp's embedded endpoints work the same way. Fields sent:
+⚠️ **Double opt-in is ON.** A signup lands as *Unconfirmed* and is not on the
+list until they click the confirmation email — so they will not appear under the
+default "Active" filter, only under "Unconfirmed". The confirmation copy on the
+page says so ("open the email we just sent and confirm"). Two consequences: the
+Meta `Lead` event fires on submit, not on confirmation, so it will always read
+higher than the confirmed count; and if you switch double opt-in off in
+MailerLite, change `doneBody` in both languages back to a plain "you're on the
+list".
 
-| meaning          | `plain`        | `mailerlite`            |
-|------------------|----------------|-------------------------|
-| first name       | `first`        | `fields[name]`          |
-| email            | `email`        | `fields[email]`         |
-| country, readable| `country`      | `fields[country]`       |
-| ISO 3166-1 code  | `country_code` | `fields[country_code]`  |
-| iOS / Android    | `platform`     | `fields[platform]`      |
-| consent ticked   | `consent`      | — (the form won't submit without it either way) |
-
-Both the country name and its code are sent on purpose: a column full of `SN` is
-useless without a lookup table, and a column full of names is awkward to group
-by. The name is always sent in the language the visitor was reading.
-
-If the receiving end is MailerLite rather than Formspree, `country`,
-`country_code` and `platform` each need a matching **custom field** created
-there first, or they are silently dropped.
+Switching provider: paste another endpoint and set `WAITLIST_FORMAT` to
+`'plain'`, which sends flat field names (`first`, `email`, `country`, …) as
+Formspree, Buttondown, ConvertKit and Mailchimp expect.
 
 A hidden `_gotcha` honeypot silently drops bots.
 
