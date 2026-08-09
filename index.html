@@ -23,8 +23,13 @@
 <meta name="twitter:description" content="A mobile cooking game set in a busy African kitchen. Soft launch 2027.">
 <meta name="twitter:image" content="https://tasteofafrica.app/assets/og.jpg">
 
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<!-- Small sizes get the logo's tricolour ring: the full illustration is a
+     smudge below ~56px. Larger sizes get the artwork itself. -->
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon-48.png" sizes="48x48" type="image/png">
+<link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" as="image" href="assets/logo.png">
 
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/bricolage-grotesque-latin.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-mono-500-latin.woff2" crossorigin>
@@ -99,12 +104,48 @@ a:hover { color: var(--amber-hi); }
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
+    "topbar"
     "masthead"
     "reel"
     "body"
     "colophon";
   gap: 20px;
   align-content: start;
+}
+
+/* ── language switch, its own slim row at the very top ─────── */
+
+.topbar {
+  grid-area: topbar;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.langswitch {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid rgba(247, 242, 232, .16);
+  border-radius: 999px;
+  background: rgba(18, 16, 13, .4);
+}
+
+.langswitch__btn {
+  min-width: 38px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(247, 242, 232, .55);
+  font: 600 10.5px/1 var(--mono);
+  letter-spacing: .1em;
+  cursor: pointer;
+}
+.langswitch__btn:hover { color: var(--cream); }
+.langswitch__btn[aria-pressed="true"] {
+  background: var(--cream);
+  color: var(--ink);
 }
 
 /* ── masthead ──────────────────────────────────────────────── */
@@ -119,11 +160,13 @@ a:hover { color: var(--amber-hi); }
 
 .wordmark { display: flex; align-items: center; gap: 9px; }
 
+/* The artwork only reads from about 56px up — below that it is a brown
+   smudge, which is why the favicon uses the ring mark instead. */
 .wordmark__mark {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: var(--amber);
+  width: 52px; height: 52px;
   flex: none;
+  display: block;
+  border-radius: 50%;
 }
 
 .wordmark__text {
@@ -225,8 +268,34 @@ a:hover { color: var(--amber-hi); }
   text-wrap: pretty;
 }
 
-/* recipe chips — desktop only, per design 2a */
-.chips { display: none; }
+/* Recipe chips. The design had four of these on desktop only, but the point
+   they make — the game spans the continent — is worth making on a phone too,
+   where most of the ad traffic will land. */
+.chips__label {
+  margin: 18px 0 9px;
+  font: 600 9.5px/1 var(--mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(247, 242, 232, .42);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chips li {
+  font: 500 10.5px/1 var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 242, 232, .16);
+  color: rgba(247, 242, 232, .66);
+}
 
 /* ── the waitlist ticket ───────────────────────────────────── */
 
@@ -288,6 +357,30 @@ a:hover { color: var(--amber-hi); }
 .field input::placeholder { color: rgba(22, 18, 14, .38); }
 .field input:focus { border-color: var(--ink-warm); }
 .field input:user-invalid { border-color: var(--rust); }
+
+/* country picker — a real <select>, so phones show their native wheel */
+.field select {
+  width: 100%;
+  padding: 13px 38px 13px 13px;
+  border: 1.5px solid rgba(22, 18, 14, .16);
+  border-radius: 9px;
+  background-color: #fff;
+  color: var(--ink-warm);
+  font: 500 16px var(--mono);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%2316120E' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 8px;
+}
+.field select:focus { border-color: var(--ink-warm); }
+/* still on the placeholder option: read as a placeholder */
+.field select:invalid { color: rgba(22, 18, 14, .38); }
+.field select optgroup { font: 600 13px var(--mono); color: rgba(22, 18, 14, .55); }
+.field select option { color: var(--ink-warm); font-weight: 500; }
 
 .platform {
   border: none;
@@ -411,15 +504,19 @@ a:hover { color: var(--amber-hi); }
     min-height: 100dvh;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
+      "topbar"
       "masthead"
       "body"
       "colophon";
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto;
   }
+
+  .topbar { padding: 30px var(--gutter) 0; }
+  .langswitch__btn { min-width: 44px; min-height: 30px; font-size: 11px; }
 
   /* the footage sits behind everything; content layers must be lifted above it */
   .reel { position: fixed; inset: 0; z-index: 0; }
-  .masthead, .body, .colophon { position: relative; z-index: 1; }
+  .topbar, .masthead, .body, .colophon { position: relative; z-index: 1; }
 
   .reel__frame { position: absolute; inset: 0; border: none; border-radius: 0; }
   .reel__video {
@@ -445,8 +542,8 @@ a:hover { color: var(--amber-hi); }
   }
   .reel__toggle { right: var(--gutter); bottom: 48px; }
 
-  .masthead { padding: 46px var(--gutter) 0; }
-  .wordmark__mark { width: 32px; height: 32px; }
+  .masthead { padding: 18px var(--gutter) 0; }
+  .wordmark__mark { width: 64px; height: 64px; }
   .wordmark__text { font-size: 16px; letter-spacing: .12em; }
   .launch-badge { font-size: 12px; letter-spacing: .12em; }
   .launch-badge .badge-short { display: none; }
@@ -475,23 +572,16 @@ a:hover { color: var(--amber-hi); }
     color: rgba(247, 242, 232, .78);
   }
 
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 9px;
-    margin-top: 30px;
-    padding: 0;
-    list-style: none;
-  }
+  .chips__label { margin: 26px 0 11px; font-size: 10px; color: rgba(247, 242, 232, .52); }
+
+  .chips { gap: 8px; }
   .chips li {
-    font: 500 12px/1 var(--mono);
+    font-size: 11.5px;
     letter-spacing: .08em;
-    text-transform: uppercase;
-    padding: 10px 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(247, 242, 232, .24);
-    color: rgba(247, 242, 232, .8);
-    background: rgba(18, 16, 13, .3);
+    padding: 9px 13px;
+    border-color: rgba(247, 242, 232, .24);
+    color: rgba(247, 242, 232, .82);
+    background: rgba(18, 16, 13, .34);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
@@ -509,6 +599,7 @@ a:hover { color: var(--amber-hi); }
   .field { gap: 7px; }
   .field__label, .legend { font-size: 10px; }
   .field input { padding: 13px 14px; font-size: 15px; }
+  .field select { padding: 13px 38px 13px 14px; font-size: 15px; }
   .platform { gap: 7px; }
   .platform__options { gap: 9px; }
   .platform__opt { min-height: 44px; }
@@ -530,12 +621,13 @@ a:hover { color: var(--amber-hi); }
 /* Short desktop windows: tighten the margins rather than let the ticket
    push the headline off screen. The clip is fixed, so scrolling is fine. */
 @media (min-width: 900px) and (max-height: 780px) {
-  .masthead { padding-top: 30px; }
+  .topbar { padding-top: 20px; }
+  .masthead { padding-top: 12px; }
   .body { padding-block: 26px 20px; }
   .colophon { padding-bottom: 30px; }
   .lede h1 { font-size: clamp(42px, 4.4vw, 58px); }
   .lede p { margin-top: 16px; font-size: 17px; }
-  .chips { margin-top: 20px; }
+  .chips__label { margin: 18px 0 8px; }
   .reel__label { bottom: 40px; }
   .reel__toggle { bottom: 30px; }
 }
@@ -621,19 +713,26 @@ a:hover { color: var(--amber-hi); }
 </head>
 
 <body>
-<a class="skip" href="#waitlist">Skip to the waitlist form</a>
+<a class="skip" href="#waitlist" data-i18n="skip">Skip to the waitlist form</a>
 
 <div class="page">
 <div class="shell">
 
+  <div class="topbar">
+    <div class="langswitch" role="group" data-i18n-aria="langGroup" aria-label="Language">
+      <button type="button" class="langswitch__btn" data-set-lang="en">EN</button>
+      <button type="button" class="langswitch__btn" data-set-lang="fr">FR</button>
+    </div>
+  </div>
+
   <header class="masthead">
     <div class="wordmark">
-      <span class="wordmark__mark" aria-hidden="true"></span>
+      <img class="wordmark__mark" src="assets/logo.png" width="256" height="256" alt="" aria-hidden="true">
       <p class="wordmark__text">Taste of Africa</p>
     </div>
     <p class="launch-badge">
-      <span class="badge-short">SOFT LAUNCH 2027</span>
-      <span class="badge-long">SOFT LAUNCH 2027 · iOS &amp; ANDROID</span>
+      <span class="badge-short" data-i18n="badgeShort">SOFT LAUNCH 2027</span>
+      <span class="badge-long" data-i18n="badgeLong">SOFT LAUNCH 2027 · iOS &amp; ANDROID</span>
     </p>
   </header>
 
@@ -646,9 +745,10 @@ a:hover { color: var(--amber-hi); }
         preload="metadata"
         muted loop playsinline autoplay
         disablepictureinpicture
+        data-i18n-aria="videoAlt"
         aria-label="Early gameplay: a chef prepping ingredients in a busy African kitchen"></video>
       <div class="reel__scrim" aria-hidden="true"></div>
-      <p class="reel__label">EARLY GAMEPLAY</p>
+      <p class="reel__label" data-i18n="reelLabel">EARLY GAMEPLAY</p>
       <button class="reel__toggle" type="button" data-paused="false" aria-label="Pause the video">
         <svg class="icon-pause" viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0h4v14H0zM8 0h4v14H8z"/></svg>
         <svg class="icon-play" viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
@@ -659,36 +759,317 @@ a:hover { color: var(--amber-hi); }
   <div class="body">
 
     <div class="lede">
-      <h1>Table 4 is<br class="break-mobile"> still waiting.</h1>
-      <p>Juggle thieb, mafé and poulet DG at once in a busy African kitchen. More clients, more steps, less time — one missed plate and service falls apart.</p>
+      <h1 data-i18n-html="headline">Table&nbsp;4 is<br class="break-mobile"> still waiting.</h1>
+      <p data-i18n="lede">Juggle thieb, mafé and poulet DG at once in a busy African kitchen. More clients, more steps, less time — one missed plate and service falls apart.</p>
+      <p class="chips__label" data-i18n="chipsLabel">From across the continent</p>
       <ul class="chips">
         <li>Thieboudienne</li>
+        <li data-i18n="chipJollof">Jollof Rice</li>
         <li>Mafé</li>
         <li>Poulet DG</li>
         <li>Ndolé</li>
+        <li>Moambé</li>
+        <li>Doro Wat</li>
+        <li>Nyama Choma</li>
+        <li data-i18n="chipTagine">Tagine</li>
+        <li>Koshari</li>
+        <li>Bobotie</li>
+        <li data-i18n="chipPiri">Piri-Piri Chicken</li>
       </ul>
     </div>
 
     <section class="ticket" id="waitlist" data-state="open" aria-labelledby="ticket-title">
       <div class="ticket__head">
-        <h2 id="ticket-title">WAITLIST TICKET</h2>
-        <span aria-hidden="true">#0001</span>
+        <h2 id="ticket-title" data-i18n="ticketHead">WAITLIST TICKET</h2>
+        <span aria-hidden="true">#3421</span>
       </div>
       <div class="ticket__perf" aria-hidden="true"></div>
 
       <form class="form" novalidate>
         <label class="field">
-          <span class="field__label">First name</span>
+          <span class="field__label" data-i18n="labelFirst">First name</span>
           <input name="first" type="text" required autocomplete="given-name" placeholder="Aminata">
         </label>
 
         <label class="field">
-          <span class="field__label">Email</span>
-          <input name="email" type="email" required autocomplete="email" placeholder="you@email.com">
+          <span class="field__label" data-i18n="labelEmail">Email</span>
+          <input name="email" type="email" required autocomplete="email" data-i18n-ph="phEmail" placeholder="you@email.com">
+        </label>
+
+        <label class="field">
+          <span class="field__label" data-i18n="labelCountry">Country</span>
+          <select name="country" required autocomplete="country">
+            <option value="" selected disabled data-i18n="phCountry">Where are you cooking from?</option>
+            <optgroup data-i18n-label="grpAfrica" label="Africa">
+            <option value="DZ">Algeria</option>
+            <option value="AO">Angola</option>
+            <option value="BJ">Benin</option>
+            <option value="BW">Botswana</option>
+            <option value="BF">Burkina Faso</option>
+            <option value="BI">Burundi</option>
+            <option value="CM">Cameroon</option>
+            <option value="IC">Canary Islands</option>
+            <option value="CV">Cape Verde</option>
+            <option value="CF">Central African Republic</option>
+            <option value="EA">Ceuta & Melilla</option>
+            <option value="TD">Chad</option>
+            <option value="IO">Chagos Archipelago</option>
+            <option value="KM">Comoros</option>
+            <option value="CG">Congo - Brazzaville</option>
+            <option value="CD">Congo - Kinshasa</option>
+            <option value="CI">Côte d’Ivoire</option>
+            <option value="DJ">Djibouti</option>
+            <option value="EG">Egypt</option>
+            <option value="GQ">Equatorial Guinea</option>
+            <option value="ER">Eritrea</option>
+            <option value="SZ">Eswatini</option>
+            <option value="ET">Ethiopia</option>
+            <option value="TF">French Southern Territories</option>
+            <option value="GA">Gabon</option>
+            <option value="GM">Gambia</option>
+            <option value="GH">Ghana</option>
+            <option value="GN">Guinea</option>
+            <option value="GW">Guinea-Bissau</option>
+            <option value="KE">Kenya</option>
+            <option value="LS">Lesotho</option>
+            <option value="LR">Liberia</option>
+            <option value="LY">Libya</option>
+            <option value="MG">Madagascar</option>
+            <option value="MW">Malawi</option>
+            <option value="ML">Mali</option>
+            <option value="MR">Mauritania</option>
+            <option value="MU">Mauritius</option>
+            <option value="YT">Mayotte</option>
+            <option value="MA">Morocco</option>
+            <option value="MZ">Mozambique</option>
+            <option value="NA">Namibia</option>
+            <option value="NE">Niger</option>
+            <option value="NG">Nigeria</option>
+            <option value="RW">Rwanda</option>
+            <option value="RE">Réunion</option>
+            <option value="SN">Senegal</option>
+            <option value="SC">Seychelles</option>
+            <option value="SL">Sierra Leone</option>
+            <option value="SO">Somalia</option>
+            <option value="ZA">South Africa</option>
+            <option value="SS">South Sudan</option>
+            <option value="SH">St. Helena</option>
+            <option value="SD">Sudan</option>
+            <option value="ST">São Tomé & Príncipe</option>
+            <option value="TZ">Tanzania</option>
+            <option value="TG">Togo</option>
+            <option value="TN">Tunisia</option>
+            <option value="UG">Uganda</option>
+            <option value="EH">Western Sahara</option>
+            <option value="ZM">Zambia</option>
+            <option value="ZW">Zimbabwe</option>
+            </optgroup>
+            <optgroup data-i18n-label="grpElsewhere" label="Elsewhere">
+            <option value="AF">Afghanistan</option>
+            <option value="AL">Albania</option>
+            <option value="AS">American Samoa</option>
+            <option value="AD">Andorra</option>
+            <option value="AI">Anguilla</option>
+            <option value="AQ">Antarctica</option>
+            <option value="AG">Antigua & Barbuda</option>
+            <option value="AR">Argentina</option>
+            <option value="AM">Armenia</option>
+            <option value="AW">Aruba</option>
+            <option value="AC">Ascension Island</option>
+            <option value="AU">Australia</option>
+            <option value="AT">Austria</option>
+            <option value="AZ">Azerbaijan</option>
+            <option value="BS">Bahamas</option>
+            <option value="BH">Bahrain</option>
+            <option value="BD">Bangladesh</option>
+            <option value="BB">Barbados</option>
+            <option value="BY">Belarus</option>
+            <option value="BE">Belgium</option>
+            <option value="BZ">Belize</option>
+            <option value="BM">Bermuda</option>
+            <option value="BT">Bhutan</option>
+            <option value="BO">Bolivia</option>
+            <option value="BA">Bosnia & Herzegovina</option>
+            <option value="BV">Bouvet Island</option>
+            <option value="BR">Brazil</option>
+            <option value="VG">British Virgin Islands</option>
+            <option value="BN">Brunei</option>
+            <option value="BG">Bulgaria</option>
+            <option value="KH">Cambodia</option>
+            <option value="CA">Canada</option>
+            <option value="BQ">Caribbean Netherlands</option>
+            <option value="KY">Cayman Islands</option>
+            <option value="CL">Chile</option>
+            <option value="CN">China mainland</option>
+            <option value="CX">Christmas Island</option>
+            <option value="CP">Clipperton Island</option>
+            <option value="CC">Cocos (Keeling) Islands</option>
+            <option value="CO">Colombia</option>
+            <option value="CK">Cook Islands</option>
+            <option value="CR">Costa Rica</option>
+            <option value="HR">Croatia</option>
+            <option value="CU">Cuba</option>
+            <option value="CW">Curaçao</option>
+            <option value="CY">Cyprus</option>
+            <option value="CZ">Czechia</option>
+            <option value="DK">Denmark</option>
+            <option value="DG">Diego Garcia</option>
+            <option value="DM">Dominica</option>
+            <option value="DO">Dominican Republic</option>
+            <option value="EC">Ecuador</option>
+            <option value="SV">El Salvador</option>
+            <option value="EE">Estonia</option>
+            <option value="EU">European Union</option>
+            <option value="EZ">Eurozone</option>
+            <option value="FK">Falkland Islands</option>
+            <option value="FO">Faroe Islands</option>
+            <option value="FJ">Fiji</option>
+            <option value="FI">Finland</option>
+            <option value="FR">France</option>
+            <option value="GF">French Guiana</option>
+            <option value="PF">French Polynesia</option>
+            <option value="GE">Georgia</option>
+            <option value="DE">Germany</option>
+            <option value="GI">Gibraltar</option>
+            <option value="GR">Greece</option>
+            <option value="GL">Greenland</option>
+            <option value="GD">Grenada</option>
+            <option value="GP">Guadeloupe</option>
+            <option value="GU">Guam</option>
+            <option value="GT">Guatemala</option>
+            <option value="GG">Guernsey</option>
+            <option value="GY">Guyana</option>
+            <option value="HT">Haiti</option>
+            <option value="HM">Heard & McDonald Islands</option>
+            <option value="HN">Honduras</option>
+            <option value="HK">Hong Kong</option>
+            <option value="HU">Hungary</option>
+            <option value="IS">Iceland</option>
+            <option value="IN">India</option>
+            <option value="ID">Indonesia</option>
+            <option value="IR">Iran</option>
+            <option value="IQ">Iraq</option>
+            <option value="IE">Ireland</option>
+            <option value="IM">Isle of Man</option>
+            <option value="IL">Israel</option>
+            <option value="IT">Italy</option>
+            <option value="JM">Jamaica</option>
+            <option value="JP">Japan</option>
+            <option value="JE">Jersey</option>
+            <option value="JO">Jordan</option>
+            <option value="KZ">Kazakhstan</option>
+            <option value="KI">Kiribati</option>
+            <option value="XK">Kosovo</option>
+            <option value="KW">Kuwait</option>
+            <option value="KG">Kyrgyzstan</option>
+            <option value="LA">Laos</option>
+            <option value="LV">Latvia</option>
+            <option value="LB">Lebanon</option>
+            <option value="LI">Liechtenstein</option>
+            <option value="LT">Lithuania</option>
+            <option value="LU">Luxembourg</option>
+            <option value="MO">Macao</option>
+            <option value="MY">Malaysia</option>
+            <option value="MV">Maldives</option>
+            <option value="MT">Malta</option>
+            <option value="MH">Marshall Islands</option>
+            <option value="MQ">Martinique</option>
+            <option value="MX">Mexico</option>
+            <option value="FM">Micronesia</option>
+            <option value="MD">Moldova</option>
+            <option value="MC">Monaco</option>
+            <option value="MN">Mongolia</option>
+            <option value="ME">Montenegro</option>
+            <option value="MS">Montserrat</option>
+            <option value="MM">Myanmar (Burma)</option>
+            <option value="NR">Nauru</option>
+            <option value="NP">Nepal</option>
+            <option value="NL">Netherlands</option>
+            <option value="NC">New Caledonia</option>
+            <option value="NZ">New Zealand</option>
+            <option value="NI">Nicaragua</option>
+            <option value="NU">Niue</option>
+            <option value="NF">Norfolk Island</option>
+            <option value="KP">North Korea</option>
+            <option value="MK">North Macedonia</option>
+            <option value="MP">Northern Mariana Islands</option>
+            <option value="NO">Norway</option>
+            <option value="OM">Oman</option>
+            <option value="QO">Outlying Oceania</option>
+            <option value="PK">Pakistan</option>
+            <option value="PW">Palau</option>
+            <option value="PS">Palestinian Territories</option>
+            <option value="PA">Panama</option>
+            <option value="PG">Papua New Guinea</option>
+            <option value="PY">Paraguay</option>
+            <option value="PE">Peru</option>
+            <option value="PH">Philippines</option>
+            <option value="PN">Pitcairn Islands</option>
+            <option value="PL">Poland</option>
+            <option value="PT">Portugal</option>
+            <option value="PR">Puerto Rico</option>
+            <option value="QA">Qatar</option>
+            <option value="RO">Romania</option>
+            <option value="RU">Russia</option>
+            <option value="WS">Samoa</option>
+            <option value="SM">San Marino</option>
+            <option value="CQ">Sark</option>
+            <option value="SA">Saudi Arabia</option>
+            <option value="RS">Serbia</option>
+            <option value="SG">Singapore</option>
+            <option value="SX">Sint Maarten</option>
+            <option value="SK">Slovakia</option>
+            <option value="SI">Slovenia</option>
+            <option value="GS">So. Georgia & So. Sandwich Isl.</option>
+            <option value="SB">Solomon Islands</option>
+            <option value="KR">South Korea</option>
+            <option value="ES">Spain</option>
+            <option value="LK">Sri Lanka</option>
+            <option value="BL">St. Barthélemy</option>
+            <option value="KN">St. Kitts & Nevis</option>
+            <option value="LC">St. Lucia</option>
+            <option value="MF">St. Martin</option>
+            <option value="PM">St. Pierre & Miquelon</option>
+            <option value="VC">St. Vincent & Grenadines</option>
+            <option value="SR">Suriname</option>
+            <option value="SJ">Svalbard & Jan Mayen</option>
+            <option value="SE">Sweden</option>
+            <option value="CH">Switzerland</option>
+            <option value="SY">Syria</option>
+            <option value="TW">Taiwan</option>
+            <option value="TJ">Tajikistan</option>
+            <option value="TH">Thailand</option>
+            <option value="TL">Timor-Leste</option>
+            <option value="TK">Tokelau</option>
+            <option value="TO">Tonga</option>
+            <option value="TT">Trinidad & Tobago</option>
+            <option value="TA">Tristan da Cunha</option>
+            <option value="TM">Turkmenistan</option>
+            <option value="TC">Turks & Caicos Islands</option>
+            <option value="TV">Tuvalu</option>
+            <option value="TR">Türkiye</option>
+            <option value="UM">U.S. Outlying Islands</option>
+            <option value="VI">U.S. Virgin Islands</option>
+            <option value="UA">Ukraine</option>
+            <option value="AE">United Arab Emirates</option>
+            <option value="GB">United Kingdom</option>
+            <option value="UN">United Nations</option>
+            <option value="US">United States</option>
+            <option value="UY">Uruguay</option>
+            <option value="UZ">Uzbekistan</option>
+            <option value="VU">Vanuatu</option>
+            <option value="VA">Vatican City</option>
+            <option value="VE">Venezuela</option>
+            <option value="VN">Vietnam</option>
+            <option value="WF">Wallis & Futuna</option>
+            <option value="YE">Yemen</option>
+            <option value="AX">Åland Islands</option>
+            </optgroup>
+          </select>
         </label>
 
         <fieldset class="platform">
-          <legend class="legend">Playing on</legend>
+          <legend class="legend" data-i18n="labelPlatform">Playing on</legend>
           <div class="platform__options">
             <label class="platform__opt"><input name="platform" type="radio" value="iOS">iOS</label>
             <label class="platform__opt"><input name="platform" type="radio" value="Android">Android</label>
@@ -697,28 +1078,28 @@ a:hover { color: var(--amber-hi); }
 
         <label class="consent">
           <input name="consent" type="checkbox" value="yes">
-          <span>I want news about the game and a heads-up on launch day.</span>
+          <span data-i18n="consentLine">I want news about the game and a heads-up on launch day.</span>
         </label>
 
         <p class="trap" aria-hidden="true">
-          <label>Leave this field empty<input name="_gotcha" type="text" tabindex="-1" autocomplete="off"></label>
+          <label data-i18n="trap">Leave this field empty<input name="_gotcha" type="text" tabindex="-1" autocomplete="off"></label>
         </p>
 
         <p class="form__error" role="alert" aria-live="polite"></p>
 
-        <button class="submit" type="submit">Put me on the list</button>
+        <button class="submit" type="submit" data-i18n="submit">Put me on the list</button>
       </form>
 
       <div class="done" role="status" aria-live="polite">
-        <p class="done__title">Order in.</p>
-        <p class="done__body">You're on the waitlist. We'll email you when the restaurant opens its doors.</p>
-        <p class="done__stamp">SERVED · THANK YOU</p>
+        <p class="done__title" data-i18n="doneTitle">Order in.</p>
+        <p class="done__body" data-i18n="doneBody">You're on the waitlist. We'll email you when the restaurant opens its doors.</p>
+        <p class="done__stamp" data-i18n="doneStamp">SERVED · THANK YOU</p>
       </div>
     </section>
 
   </div>
 
-  <p class="colophon">
+  <p class="colophon" data-i18n-html="colophon">
     tasteofafrica.app<span class="colophon-long"> · we only email about the game</span> · unsubscribe anytime
   </p>
 
@@ -728,13 +1109,13 @@ a:hover { color: var(--amber-hi); }
 <aside class="cookie-bar" id="cookie-bar" aria-label="Tracking consent" hidden>
   <div class="cookie-bar__card">
     <p class="cookie-bar__text">
-      <strong>Can we count the clicks?</strong>
-      We'd like to load Meta's pixel so we know which ads bring people here — it stores
-      cookies on your device. Decline and nothing on this page tracks you.
+      <strong data-i18n="cookieTitle">Can we count the clicks?</strong>
+      <span data-i18n="cookieText">We'd like to load Meta's pixel so we know which ads bring people here — it stores
+      cookies on your device. Decline and nothing on this page tracks you.</span>
     </p>
     <div class="cookie-bar__actions">
-      <button type="button" class="cookie-bar__btn cookie-bar__btn--ghost" data-consent="denied">Decline</button>
-      <button type="button" class="cookie-bar__btn cookie-bar__btn--solid" data-consent="granted">Accept</button>
+      <button type="button" class="cookie-bar__btn cookie-bar__btn--ghost" data-consent="denied" data-i18n="decline">Decline</button>
+      <button type="button" class="cookie-bar__btn cookie-bar__btn--solid" data-consent="granted" data-i18n="accept">Accept</button>
     </div>
   </div>
 </aside>
@@ -758,16 +1139,178 @@ a:hover { color: var(--amber-hi); }
      ════════════════════════════════════════════════════════════ */
   var WAITLIST_ENDPOINT = '';
 
-  var COPY = {
-    consent:  "Tick the box and we're good to go.",
-    email:    'We need a real email address to reach you.',
-    name:     'A first name, so we know who is at the table.',
-    network:  "That didn't go through. Try again in a moment?",
-    offline:  'Looks like the connection dropped. Try again in a moment?',
-    unwired:  'The waitlist is not connected yet — set WAITLIST_ENDPOINT in index.html.',
-    sending:  'Sending…',
-    button:   'Put me on the list'
+  /* ── English / French ─────────────────────────────────────────
+     Every visible string lives here. In the markup, elements carry
+     data-i18n (textContent), data-i18n-html, data-i18n-ph
+     (placeholder), data-i18n-aria or data-i18n-label (optgroup).
+     Country names are NOT in this table — Intl.DisplayNames
+     translates them from their ISO codes at no cost in bytes. */
+
+  var LANG_KEY = 'toa-lang';
+
+  var T = {
+    en: {
+      title:        'Taste of Africa — a mobile cooking game. Join the waitlist.',
+      metaDesc:     'Juggle thieboudienne, jollof rice, doro wat and tagine at once in a busy African kitchen. Prep, assemble, fire, plate — before the table walks out. Soft launch 2027 on iOS and Android.',
+      skip:         'Skip to the waitlist form',
+      langGroup:    'Language',
+      badgeShort:   'SOFT LAUNCH 2027',
+      badgeLong:    'SOFT LAUNCH 2027 · iOS & ANDROID',
+      videoAlt:     'Early gameplay: a chef prepping ingredients in a busy African kitchen',
+      reelLabel:    'EARLY GAMEPLAY',
+      videoPlay:    'Play the video',
+      videoPause:   'Pause the video',
+      /* non-breaking space: "Table 4" must never split across lines */
+      headline:     'Table&nbsp;4 is<br class="break-mobile"> still waiting.',
+      lede:         'Juggle thieb, mafé and poulet DG at once in a busy African kitchen. More clients, more steps, less time — one missed plate and service falls apart.',
+      chipsLabel:   'From across the continent',
+      chipJollof:   'Jollof Rice',
+      chipTagine:   'Tagine',
+      chipPiri:     'Piri-Piri Chicken',
+      ticketHead:   'WAITLIST TICKET',
+      labelFirst:   'First name',
+      labelEmail:   'Email',
+      phEmail:      'you@email.com',
+      labelCountry: 'Country',
+      phCountry:    'Where are you cooking from?',
+      grpAfrica:    'Africa',
+      grpElsewhere: 'Elsewhere',
+      labelPlatform:'Playing on',
+      consentLine:  'I want news about the game and a heads-up on launch day.',
+      trap:         'Leave this field empty',
+      submit:       'Put me on the list',
+      sending:      'Sending…',
+      doneTitle:    'Order in.',
+      doneTitleName:'Order in, {name}.',
+      doneBody:     "You're on the waitlist. We'll email you when the restaurant opens its doors.",
+      doneStamp:    'SERVED · THANK YOU',
+      colophon:     'tasteofafrica.app<span class="colophon-long"> · we only email about the game</span> · unsubscribe anytime',
+      cookieTitle:  'Can we count the clicks?',
+      cookieText:   "We'd like to load Meta's pixel so we know which ads bring people here — it stores cookies on your device. Decline and nothing on this page tracks you.",
+      decline:      'Decline',
+      accept:       'Accept',
+      errName:      'A first name, so we know who is at the table.',
+      errEmail:     'We need a real email address to reach you.',
+      errCountry:   'Pick a country — it tells us where to open first.',
+      errConsent:   "Tick the box and we're good to go.",
+      errNetwork:   "That didn't go through. Try again in a moment?",
+      errOffline:   'Looks like the connection dropped. Try again in a moment?',
+      errUnwired:   'The waitlist is not connected yet — set WAITLIST_ENDPOINT in index.html.'
+    },
+    fr: {
+      title:        'Taste of Africa — un jeu de cuisine mobile. Rejoins la liste d’attente.',
+      metaDesc:     'Enchaîne thieb, riz jollof, doro wat et tajine dans une cuisine africaine sous pression. Prépare, assemble, lance la cuisson, sers — avant que la table ne parte. Sortie 2027 sur iOS et Android.',
+      skip:         'Aller au formulaire d’inscription',
+      langGroup:    'Langue',
+      badgeShort:   'SORTIE 2027',
+      badgeLong:    'SORTIE 2027 · iOS & ANDROID',
+      videoAlt:     'Images de jeu : un chef prépare des ingrédients dans une cuisine africaine animée',
+      reelLabel:    'IMAGES DE JEU',
+      videoPlay:    'Lire la vidéo',
+      videoPause:   'Mettre la vidéo en pause',
+      headline:     'La table&nbsp;4<br class="break-mobile"> attend toujours.',
+      lede:         'Enchaîne thieb, mafé et poulet DG dans une cuisine africaine sous pression. Plus de clients, plus d’étapes, moins de temps — un plat manqué et le service s’écroule.',
+      chipsLabel:   'De tout le continent',
+      chipJollof:   'Riz Jollof',
+      chipTagine:   'Tajine',
+      chipPiri:     'Poulet Piri-Piri',
+      ticketHead:   'TICKET D’ATTENTE',
+      labelFirst:   'Prénom',
+      labelEmail:   'E-mail',
+      phEmail:      'toi@email.com',
+      labelCountry: 'Pays',
+      phCountry:    'Tu cuisines depuis où ?',
+      grpAfrica:    'Afrique',
+      grpElsewhere: 'Ailleurs',
+      labelPlatform:'Tu joues sur',
+      consentLine:  'Je veux des nouvelles du jeu et être prévenu le jour du lancement.',
+      trap:         'Laisse ce champ vide',
+      submit:       'Inscris-moi sur la liste',
+      sending:      'Envoi…',
+      doneTitle:    'Commande passée.',
+      doneTitleName:'Commande passée, {name}.',
+      doneBody:     'Tu es sur la liste d’attente. On t’écrit dès que le restaurant ouvre ses portes.',
+      doneStamp:    'SERVI · MERCI',
+      colophon:     'tasteofafrica.app<span class="colophon-long"> · on n’écrit que pour parler du jeu</span> · désinscription à tout moment',
+      cookieTitle:  'On peut compter les clics ?',
+      cookieText:   'On aimerait charger le pixel de Meta pour savoir quelles publicités amènent du monde ici — il dépose des cookies sur ton appareil. Refuse, et rien sur cette page ne te suit.',
+      decline:      'Refuser',
+      accept:       'Accepter',
+      errName:      'Un prénom, pour savoir qui est à table.',
+      errEmail:     'Il nous faut une vraie adresse e-mail pour te joindre.',
+      errCountry:   'Choisis un pays — ça nous dit où ouvrir en premier.',
+      errConsent:   'Coche la case et c’est parti.',
+      errNetwork:   'Ça n’est pas passé. On réessaie dans un instant ?',
+      errOffline:   'La connexion semble coupée. On réessaie dans un instant ?',
+      errUnwired:   'La liste d’attente n’est pas branchée — renseigne WAITLIST_ENDPOINT dans index.html.'
+    }
   };
+
+  var stored = null;
+  try { stored = localStorage.getItem(LANG_KEY); } catch (e) { /* private mode */ }
+  var lang = T[stored] ? stored
+           : (String(navigator.language || 'en').toLowerCase().indexOf('fr') === 0 ? 'fr' : 'en');
+
+  var t = function (key) {
+    return (T[lang] && T[lang][key]) || T.en[key] || '';
+  };
+
+  /* Anything whose text depends on state as well as language re-renders
+     through these, so a mid-session language switch stays consistent. */
+  var restate = [];
+
+  var each = function (selector, fn) {
+    Array.prototype.forEach.call(document.querySelectorAll(selector), fn);
+  };
+
+  var localiseCountries = function () {
+    var select = document.querySelector('select[name="country"]');
+    if (!select || typeof Intl === 'undefined' || !Intl.DisplayNames) return;
+    var names;
+    try { names = new Intl.DisplayNames([lang], { type: 'region' }); } catch (e) { return; }
+
+    each('select[name="country"] optgroup', function (group) {
+      var options = Array.prototype.slice.call(group.children);
+      options.forEach(function (option) {
+        try {
+          var name = names.of(option.value);
+          if (name && name !== option.value) option.textContent = name;
+        } catch (e) { /* unknown code: keep what was served */ }
+      });
+      options
+        .sort(function (a, b) { return a.textContent.localeCompare(b.textContent, lang); })
+        .forEach(function (option) { group.appendChild(option); });
+    });
+  };
+
+  var applyLang = function (next) {
+    if (T[next]) lang = next;
+    document.documentElement.lang = lang;
+    document.title = t('title');
+
+    var description = document.querySelector('meta[name="description"]');
+    if (description) description.setAttribute('content', t('metaDesc'));
+
+    each('[data-i18n]', function (el) { el.textContent = t(el.getAttribute('data-i18n')); });
+    each('[data-i18n-html]', function (el) { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+    each('[data-i18n-ph]', function (el) { el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph'))); });
+    each('[data-i18n-aria]', function (el) { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
+    each('[data-i18n-label]', function (el) { el.setAttribute('label', t(el.getAttribute('data-i18n-label'))); });
+
+    localiseCountries();
+    restate.forEach(function (fn) { fn(); });
+
+    each('[data-set-lang]', function (button) {
+      button.setAttribute('aria-pressed', button.getAttribute('data-set-lang') === lang ? 'true' : 'false');
+    });
+  };
+
+  each('[data-set-lang]', function (button) {
+    button.addEventListener('click', function () {
+      applyLang(button.getAttribute('data-set-lang'));
+      try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* private mode */ }
+    });
+  });
 
   /* ── Meta pixel, behind consent ───────────────────────────
      The pixel is the ONLY third-party request this page can make, and it
@@ -839,8 +1382,9 @@ a:hover { color: var(--amber-hi); }
     var sync = function () {
       var paused = video.paused;
       toggle.dataset.paused = paused ? 'true' : 'false';
-      toggle.setAttribute('aria-label', paused ? 'Play the video' : 'Pause the video');
+      toggle.setAttribute('aria-label', t(paused ? 'videoPlay' : 'videoPause'));
     };
+    restate.push(sync);
 
     var start = function () {
       video.muted = true;                    // required for autoplay everywhere
@@ -873,13 +1417,28 @@ a:hover { color: var(--amber-hi); }
   var button = ticket.querySelector('.submit');
   var title  = ticket.querySelector('.done__title');
 
-  var fail = function (message, field) {
-    error.textContent = message;
+  /* Remembered so a language switch re-renders them in the new language
+     instead of leaving stale English (or French) on screen. */
+  var errorKey = null;
+  var servedName = null;
+
+  var fail = function (key, field) {
+    errorKey = key;
+    error.textContent = t(key);
     if (field) field.focus();
   };
 
+  restate.push(function () {
+    error.textContent = errorKey ? t(errorKey) : '';
+    if (servedName) {
+      title.textContent = t('doneTitleName').replace('{name}', servedName);
+    }
+    if (!button.disabled) button.textContent = t('submit');
+  });
+
   form.addEventListener('submit', function (event) {
     event.preventDefault();
+    errorKey = null;
     error.textContent = '';
 
     var data  = new FormData(form);
@@ -887,23 +1446,29 @@ a:hover { color: var(--amber-hi); }
     var email = (data.get('email') || '').toString().trim();
 
     if (data.get('_gotcha')) return;                       // bot
-    if (!first)                        return fail(COPY.name, form.first);
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return fail(COPY.email, form.email);
-    if (!data.get('consent'))          return fail(COPY.consent, form.consent);
+    if (!first)                        return fail('errName', form.first);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return fail('errEmail', form.email);
+    if (!data.get('country'))          return fail('errCountry', form.country);
+    if (!data.get('consent'))          return fail('errConsent', form.consent);
 
-    if (!WAITLIST_ENDPOINT) return fail(COPY.unwired);
+    if (!WAITLIST_ENDPOINT) return fail('errUnwired');
 
     var served = function () {
-      title.textContent = 'Order in, ' + first + '.';
+      servedName = first;
+      title.textContent = t('doneTitleName').replace('{name}', first);
       ticket.dataset.state = 'done';
       track('Lead');            // the event Meta can actually optimise towards
     };
 
     button.disabled = true;
-    button.textContent = COPY.sending;
+    button.textContent = t('sending');
 
     data.set('first', first);
     data.set('email', email);
+    /* Send the readable country name as well as the ISO code — a column full
+       of "SN" is useless without a lookup table. */
+    data.set('country_code', data.get('country').toString());
+    data.set('country', form.country.options[form.country.selectedIndex].text);
     data.set('platform', (data.get('platform') || 'not specified').toString());
     data.set('consent', 'yes');
     data.set('_subject', 'Taste of Africa — new waitlist signup');
@@ -920,10 +1485,13 @@ a:hover { color: var(--amber-hi); }
       })
       .catch(function () {
         button.disabled = false;
-        button.textContent = COPY.button;
-        fail(navigator.onLine === false ? COPY.offline : COPY.network);
+        button.textContent = t('submit');
+        fail(navigator.onLine === false ? 'errOffline' : 'errNetwork');
       });
   });
+
+  /* Everything is wired: paint the page in the chosen language. */
+  applyLang(lang);
 })();
 </script>
 </body>

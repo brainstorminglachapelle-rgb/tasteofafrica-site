@@ -34,17 +34,61 @@ The page sends a normal `multipart/form-data` POST and expects any 2xx back, so
 Buttondown (`https://buttondown.email/api/emails/embed-subscribe/<user>`),
 ConvertKit and Mailchimp's embedded endpoints work the same way. Fields sent:
 
-| field      | value                                    |
-|------------|------------------------------------------|
-| `first`    | first name, trimmed                      |
-| `email`    | email address                            |
-| `platform` | `iOS`, `Android` or `not specified`      |
-| `consent`  | `yes` (the form won't submit without it) |
-| `_subject` | notification subject line for Formspree  |
+| field          | value                                            |
+|----------------|--------------------------------------------------|
+| `first`        | first name, trimmed                              |
+| `email`        | email address                                    |
+| `country`      | readable name, e.g. `Senegal` — **required**     |
+| `country_code` | ISO 3166-1 alpha-2, e.g. `SN`                    |
+| `platform`     | `iOS`, `Android` or `not specified`              |
+| `consent`      | `yes` (the form won't submit without it)         |
+| `_subject`     | notification subject line for Formspree          |
+
+Both the country name and its code are sent on purpose: a column full of `SN` is
+useless without a lookup table, and a column full of names is awkward to group
+by. The name is always sent in the language the visitor was reading.
+
+If the receiving end is MailerLite rather than Formspree, `country`,
+`country_code` and `platform` each need a matching **custom field** created
+there first, or they are silently dropped.
 
 A hidden `_gotcha` honeypot silently drops bots.
 
 ---
+
+## English and French
+
+One page, one URL, a `EN | FR` switch at the top right. **Every visible string
+lives in the `T` object** at the top of the `<script>` — two flat tables, 45
+keys each, kept at parity. Nothing is duplicated in the markup: elements carry
+
+| attribute | what it sets |
+|-----------|--------------|
+| `data-i18n` | `textContent` |
+| `data-i18n-html` | `innerHTML` (only the headline and colophon, which contain tags) |
+| `data-i18n-ph` | `placeholder` |
+| `data-i18n-aria` | `aria-label` |
+| `data-i18n-label` | an `<optgroup>`'s `label` |
+
+The switch also sets `<html lang>`, the `<title>` and the meta description, and
+remembers the choice in `localStorage` (`toa-lang`). First visit with no stored
+choice follows `navigator.language`.
+
+**Country names are not in the table.** `Intl.DisplayNames` translates them from
+their ISO codes at runtime, so 262 countries cost zero extra bytes in either
+language — and the list is re-sorted alphabetically for the active language
+(French starts at "Afrique du Sud", English at "Algeria"). A visitor's
+already-picked country survives the switch.
+
+Text that depends on state as well as language — the video's play/pause label,
+the current error message, the "Order in, Aminata." confirmation — re-renders
+through the `restate` array, so switching language mid-session never leaves a
+stale sentence on screen.
+
+Adding a third language means adding one key set to `T` and one button; nothing
+else changes. If French SEO ever matters, that is the point to split into
+`/fr/` pages with `hreflang` instead — a JS switch is invisible to crawlers.
+For ad traffic, which is what this page is for, it does not matter.
 
 ## Tracking
 
@@ -95,11 +139,15 @@ assets/
   intro.mp4                the gameplay clip (784×470, 5 s, silent, 630 kB)
   poster.jpg               first frame — stands in until the clip plays
   og.jpg                   1200×630 social preview card
-  favicon.svg              tab icon
-  apple-touch-icon.png     180×180 home-screen icon
+  logo.png                 256×256 round badge — the header mark
+  favicon-32/48.png        the simplified ring mark (see Logo below)
+  favicon-192.png          full artwork, for Android home screens
+  apple-touch-icon.png     180×180 iOS home-screen icon
   fonts.css                @font-face declarations
   fonts/*.woff2            self-hosted Bricolage Grotesque + IBM Plex Mono
+logo-master.jpg            the source artwork (in tools/)
 tools/fetch-fonts.mjs      regenerates assets/fonts* from Google Fonts
+tools/make-logo.swift      derives every logo asset from the master
 CNAME  robots.txt  sitemap.xml  .nojekyll
 ```
 
@@ -120,6 +168,40 @@ That rewrites `assets/fonts.css` with one `@font-face` per weight — if
 Bricolage still ships as a variable font, re-collapse the three identical files
 into `bricolage-grotesque-latin.woff2` with `font-weight: 500 800`, as the
 committed `fonts.css` does.
+
+### Logo
+
+The master artwork is `tools/logo-master.jpg` (1254×1254, the illustration on a
+uniform cream field). Everything else derives from it:
+
+```bash
+swift tools/make-logo.swift tools/logo-master.jpg assets
+```
+
+The script finds the artwork inside the cream field on its own — it measures the
+true radius rather than the bounding box, because the leaves poke out past the
+ring at the lower left and a box-based crop clips them. Replace the master and
+re-run; no coordinates are hard-coded.
+
+**The illustration does not survive small sizes.** It is a face, a patterned
+headwrap, a bowl of individual foods, leaves, a map and a tricolour ring — below
+about 56px that is a brown smudge. So:
+
+| size | what is shown |
+|------|---------------|
+| 16–48px (favicon) | the **tricolour ring alone**, no figure |
+| 180px+ (home screens, OG card) | the full artwork |
+| header mark | 52px mobile / 64px desktop — the floor at which the figure reads |
+
+The ring's three colours (`#E8A526` amber, `#B14110` rust, `#44691A` green) were
+sampled off the master, and land within a few points of the page's own `--amber`
+and `--rust`. If the logo ever changes, re-sample them: the arc angles and
+colours are the `arcs` array in `make-logo.swift`.
+
+The header mark is an `<img>` on a transparent-cornered round badge. The artwork
+has a cream field and a white keyline drawn around the figure — it is designed to
+sit on light, so dropping it straight onto `#12100D` would show that keyline as a
+cut-out halo. The cream disc is what makes it sit correctly on the dark page.
 
 ### Regenerating the images
 

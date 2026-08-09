@@ -80,11 +80,21 @@ let hg = CGGradient(colorsSpace: sp,
                     locations: [0.0, 1.0])!
 c.drawLinearGradient(hg, start: CGPoint(x: 0, y: 0), end: CGPoint(x: 720, y: 0), options: [])
 
-// wordmark, top-left
-c.setFillColor(amber.cgColor)
-c.fillEllipse(in: CGRect(x: 64, y: CGFloat(ogH) - 64 - 30, width: 30, height: 30))
+// wordmark, top-left — the real logo badge, so shares look branded.
+// Run tools/make-logo.swift first; this reads the logo.png it writes.
+let logoSide: CGFloat = 86
+let logoRect = CGRect(x: 60, y: CGFloat(ogH) - 44 - logoSide, width: logoSide, height: logoSide)
+if let logo = NSImage(contentsOf: outDir.appendingPathComponent("logo.png")),
+   let logoTiff = logo.tiffRepresentation,
+   let logoCG = NSBitmapImageRep(data: logoTiff)?.cgImage {
+  c.draw(logoCG, in: logoRect)
+} else {
+  FileHandle.standardError.write("logo.png introuvable — run make-logo.swift first\n".data(using: .utf8)!)
+  c.setFillColor(amber.cgColor)
+  c.fillEllipse(in: logoRect)
+}
 draw("TASTE OF AFRICA", font("BricolageGrotesque-ExtraBold", 21), cream, kern: 2.4,
-     at: CGPoint(x: 106, y: CGFloat(ogH) - 64 - 22), in: c)
+     at: CGPoint(x: logoRect.maxX + 16, y: logoRect.midY - 7), in: c)
 
 // headline, bottom-left
 draw("Table 4 is", font("BricolageGrotesque-ExtraBold", 86), cream, kern: -2.4, at: CGPoint(x: 62, y: 232), in: c)
@@ -93,14 +103,5 @@ draw("A MOBILE COOKING GAME · SOFT LAUNCH 2027", font("IBMPlexMono-SemiBold", 1
      at: CGPoint(x: 64, y: 76), in: c)
 writeJPEG(c.makeImage()!, "og.jpg", 0.84)
 
-// ---- 3. apple-touch-icon.png — 180x180
-for size in [180] {
-  let s = CGFloat(size)
-  let ic = ctx(size, size)
-  ic.setFillColor(ink.cgColor)
-  ic.fill(CGRect(x: 0, y: 0, width: s, height: s))
-  ic.setFillColor(amber.cgColor)
-  let d = s * 0.58
-  ic.fillEllipse(in: CGRect(x: (s - d) / 2, y: (s - d) / 2, width: d, height: d))
-  writePNG(ic.makeImage()!, "apple-touch-icon.png")
-}
+// The favicon and apple-touch-icon are no longer generated here: they derive
+// from the logo artwork now. See tools/make-logo.swift.
