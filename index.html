@@ -380,6 +380,73 @@ a:hover { color: var(--amber-hi); }
   background-size: 12px 8px;
 }
 .field select:focus { border-color: var(--ink-warm); }
+
+/* ── country type-ahead ───────────────────────────────────────
+   262 options is unusable with a thumb, so the script swaps the
+   <select> for this. The select stays in the DOM: it is the form
+   control that actually submits, and the no-JavaScript fallback. */
+
+.combo { position: relative; }
+.combo[hidden] { display: none; }
+
+/* once the script is running, the native select steps aside */
+[data-country-field].combo-ready select { display: none; }
+
+.combo__input {
+  width: 100%;
+  padding: 13px;
+  border: 1.5px solid rgba(22, 18, 14, .16);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--ink-warm);
+  font: 500 16px var(--mono);   /* 16px keeps iOS from zooming on focus */
+  outline: none;
+}
+.combo__input::placeholder { color: rgba(22, 18, 14, .38); }
+.combo__input:focus { border-color: var(--ink-warm); }
+.combo__input[aria-expanded="true"] { border-color: var(--ink-warm); }
+/* flag an unresolved entry only once they have left the field — not on the
+   first keystroke, while they are still typing */
+.combo__input[data-picked="no"]:not(:placeholder-shown):not(:focus) { border-color: var(--rust); }
+
+.combo__list {
+  position: absolute;
+  z-index: 12;
+  top: calc(100% + 5px);
+  left: 0; right: 0;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  max-height: min(42vh, 260px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  border: 1.5px solid rgba(22, 18, 14, .16);
+  border-radius: 9px;
+  box-shadow: 0 16px 34px rgba(22, 18, 14, .22);
+}
+.combo__list[hidden] { display: none; }
+
+.combo__option {
+  padding: 11px 10px;
+  border-radius: 6px;
+  font: 500 14.5px/1.2 var(--mono);
+  color: var(--ink-warm);
+  cursor: pointer;
+}
+.combo__option[aria-selected="true"],
+.combo__option:hover {
+  background: rgba(180, 69, 31, .1);
+  color: var(--rust);
+}
+.combo__option b { font-weight: 600; color: var(--rust); }
+
+.combo__empty {
+  padding: 11px 10px;
+  font: 500 13px/1.35 var(--display);
+  color: rgba(22, 18, 14, .5);
+}
 /* still on the placeholder option: read as a placeholder */
 .field select:invalid { color: rgba(22, 18, 14, .38); }
 .field select optgroup { font: 600 13px var(--mono); color: rgba(22, 18, 14, .55); }
@@ -603,6 +670,8 @@ a:hover { color: var(--amber-hi); }
   .field__label, .legend { font-size: 10px; }
   .field input { padding: 13px 14px; font-size: 15px; }
   .field select { padding: 13px 38px 13px 14px; font-size: 15px; }
+  .combo__input { padding: 13px 14px; font-size: 15px; }
+  .combo__option { font-size: 13.5px; padding: 10px; }
   .platform { gap: 7px; }
   .platform__options { gap: 9px; }
   .platform__opt { min-height: 44px; }
@@ -799,10 +868,21 @@ a:hover { color: var(--amber-hi); }
           <input name="email" type="email" required autocomplete="email" data-i18n-ph="phEmail" placeholder="you@email.com">
         </label>
 
-        <label class="field">
-          <span class="field__label" data-i18n="labelCountry">Country</span>
-          <select name="country" required autocomplete="country">
-            <option value="" selected disabled data-i18n="phCountry">Where are you cooking from?</option>
+        <div class="field" data-country-field>
+          <label class="field__label" for="country-input" data-i18n="labelCountry">Country</label>
+
+          <!-- Type-ahead. Hidden until the script takes over, so the plain
+               <select> below stays usable with no JavaScript. -->
+          <div class="combo" hidden>
+            <input id="country-input" class="combo__input" type="text" role="combobox"
+                   aria-expanded="false" aria-autocomplete="list" aria-controls="country-listbox"
+                   autocomplete="off" spellcheck="false" data-i18n-ph="phCountry"
+                   placeholder="Start typing your country">
+            <ul id="country-listbox" class="combo__list" role="listbox" hidden></ul>
+          </div>
+
+          <select name="country" required autocomplete="country" data-i18n-aria="labelCountry" aria-label="Country">
+            <option value="" selected disabled>Where are you cooking from?</option>
             <optgroup data-i18n-label="grpAfrica" label="Africa">
             <option value="DZ">Algeria</option>
             <option value="AO">Angola</option>
@@ -1069,7 +1149,7 @@ a:hover { color: var(--amber-hi); }
             <option value="AX">Åland Islands</option>
             </optgroup>
           </select>
-        </label>
+        </div>
 
         <fieldset class="platform">
           <legend class="legend" data-i18n="labelPlatform">Playing on</legend>
@@ -1175,7 +1255,8 @@ a:hover { color: var(--amber-hi); }
       labelEmail:   'Email',
       phEmail:      'you@email.com',
       labelCountry: 'Country',
-      phCountry:    'Where are you cooking from?',
+      phCountry:    'Start typing your country',
+      comboEmpty:   'No country matches that.',
       grpAfrica:    'Africa',
       grpElsewhere: 'Elsewhere',
       labelPlatform:'Playing on',
@@ -1222,7 +1303,8 @@ a:hover { color: var(--amber-hi); }
       labelEmail:   'E-mail',
       phEmail:      'toi@email.com',
       labelCountry: 'Pays',
-      phCountry:    'Tu cuisines depuis où ?',
+      phCountry:    'Commence à taper ton pays',
+      comboEmpty:   'Aucun pays ne correspond.',
       grpAfrica:    'Afrique',
       grpElsewhere: 'Ailleurs',
       labelPlatform:'Tu joues sur',
@@ -1314,6 +1396,188 @@ a:hover { color: var(--amber-hi); }
       try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* private mode */ }
     });
   });
+
+  /* ── country type-ahead ───────────────────────────────────
+     Reads its data straight off the <select>, which stays the control
+     that submits — so translation, validation and the payload all keep
+     working untouched. Africa is ranked first: it is the audience. */
+
+  (function () {
+    var field  = document.querySelector('[data-country-field]');
+    if (!field) return;
+    var select = field.querySelector('select');
+    var combo  = field.querySelector('.combo');
+    var input  = field.querySelector('.combo__input');
+    var list   = field.querySelector('.combo__list');
+    if (!select || !combo || !input || !list) return;
+
+    var groups = select.querySelectorAll('optgroup');
+    var MAX = 8;
+    var active = -1;
+    var shown = [];
+
+    // "Sénégal" and "Senegal" must both match "senegal"
+    var plain = function (value) {
+      return String(value)
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase().replace(/['’]/g, ' ').trim();
+    };
+
+    var entries = function () {
+      var out = [];
+      Array.prototype.forEach.call(groups, function (group, groupIndex) {
+        Array.prototype.forEach.call(group.children, function (option) {
+          out.push({ code: option.value, name: option.textContent, africa: groupIndex === 0 });
+        });
+      });
+      return out;
+    };
+
+    var rank = function (query) {
+      var q = plain(query);
+      if (!q) {
+        // nothing typed yet: offer African countries as a hint
+        return entries().filter(function (e) { return e.africa; }).slice(0, MAX);
+      }
+      var starts = [], contains = [];
+      entries().forEach(function (e) {
+        var at = plain(e.name).indexOf(q);
+        if (at === 0) starts.push(e);
+        else if (at > 0) contains.push(e);
+      });
+      var africaFirst = function (a, b) { return (b.africa ? 1 : 0) - (a.africa ? 1 : 0); };
+      return starts.sort(africaFirst).concat(contains.sort(africaFirst)).slice(0, MAX);
+    };
+
+    var close = function () {
+      list.hidden = true;
+      list.innerHTML = '';
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+      active = -1;
+      shown = [];
+    };
+
+    var highlight = function (name, query) {
+      var q = plain(query);
+      if (!q) return document.createTextNode(name);
+      var at = plain(name).indexOf(q);
+      if (at < 0) return document.createTextNode(name);
+      var fragment = document.createDocumentFragment();
+      fragment.appendChild(document.createTextNode(name.slice(0, at)));
+      var hit = document.createElement('b');
+      hit.textContent = name.slice(at, at + q.length);
+      fragment.appendChild(hit);
+      fragment.appendChild(document.createTextNode(name.slice(at + q.length)));
+      return fragment;
+    };
+
+    var open = function () {
+      shown = rank(input.value);
+      list.innerHTML = '';
+
+      if (!shown.length) {
+        var empty = document.createElement('li');
+        empty.className = 'combo__empty';
+        empty.textContent = t('comboEmpty');
+        list.appendChild(empty);
+        list.hidden = false;
+        input.setAttribute('aria-expanded', 'true');
+        return;
+      }
+
+      shown.forEach(function (entry, i) {
+        var option = document.createElement('li');
+        option.className = 'combo__option';
+        option.id = 'country-option-' + i;
+        option.setAttribute('role', 'option');
+        option.setAttribute('aria-selected', 'false');
+        option.appendChild(highlight(entry.name, input.value));
+        option.addEventListener('mousedown', function (event) {
+          event.preventDefault();          // don't blur before we read it
+          pick(entry);
+        });
+        list.appendChild(option);
+      });
+
+      active = -1;
+      list.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    };
+
+    var move = function (step) {
+      if (list.hidden || !shown.length) { open(); return; }
+      active = (active + step + shown.length) % shown.length;
+      Array.prototype.forEach.call(list.children, function (option, i) {
+        option.setAttribute('aria-selected', i === active ? 'true' : 'false');
+        if (i === active) {
+          input.setAttribute('aria-activedescendant', option.id);
+          if (option.scrollIntoView) option.scrollIntoView({ block: 'nearest' });
+        }
+      });
+    };
+
+    var pick = function (entry) {
+      select.value = entry.code;
+      input.value = entry.name;
+      input.dataset.picked = 'yes';
+      close();
+    };
+
+    var clear = function () {
+      select.value = '';
+      input.dataset.picked = 'no';
+    };
+
+    /* Someone who types a full name and tabs away without choosing from
+       the list still means it — resolve it rather than lose the answer. */
+    var resolveTyped = function () {
+      var typed = plain(input.value);
+      if (!typed) { clear(); input.value = ''; return; }
+      var exact = null;
+      entries().forEach(function (e) { if (!exact && plain(e.name) === typed) exact = e; });
+      if (exact) { pick(exact); return; }
+      var only = rank(input.value);
+      if (only.length === 1) { pick(only[0]); return; }
+      clear();
+    };
+
+    input.addEventListener('input', function () { clear(); open(); });
+    input.addEventListener('focus', function () { if (list.hidden) open(); });
+
+    input.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowDown') { event.preventDefault(); move(1); }
+      else if (event.key === 'ArrowUp') { event.preventDefault(); move(-1); }
+      else if (event.key === 'Enter') {
+        if (!list.hidden && active >= 0 && shown[active]) { event.preventDefault(); pick(shown[active]); }
+        else if (!list.hidden && shown.length === 1) { event.preventDefault(); pick(shown[0]); }
+      } else if (event.key === 'Escape') { close(); }
+      else if (event.key === 'Tab') { resolveTyped(); }
+    });
+
+    input.addEventListener('blur', function () {
+      window.setTimeout(function () { resolveTyped(); close(); }, 0);
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!combo.contains(event.target)) close();
+    });
+
+    /* Keep the visible text in step when the language changes: the option
+       labels have just been rewritten and re-sorted underneath us. */
+    restate.push(function () {
+      var chosen = select.options[select.selectedIndex];
+      input.value = (chosen && chosen.value) ? chosen.textContent : '';
+      input.dataset.picked = select.value ? 'yes' : 'no';
+      if (!list.hidden) open();
+    });
+
+    // hand over from the native select
+    input.dataset.picked = 'no';
+    combo.hidden = false;
+    field.classList.add('combo-ready');
+    select.setAttribute('tabindex', '-1');
+  })();
 
   /* ── Meta pixel, behind consent ───────────────────────────
      The pixel is the ONLY third-party request this page can make, and it

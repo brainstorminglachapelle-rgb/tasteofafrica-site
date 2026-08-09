@@ -56,6 +56,31 @@ A hidden `_gotcha` honeypot silently drops bots.
 
 ---
 
+## The country field
+
+262 options in a `<select>` is unusable with a thumb, so the field is a
+**type-ahead**: type two letters, pick from at most 8 suggestions.
+
+It is a **progressive enhancement, not a replacement**. The `<select>` is still
+in the DOM and is still the control that submits — the script hides it and writes
+`select.value` when a suggestion is chosen. So validation, the payload and the
+`Intl.DisplayNames` translation all keep working untouched, and with JavaScript
+off the plain dropdown is what a visitor gets.
+
+Matching is accent- and case-blind in both directions (`senegal` finds
+`Sénégal`, `SÉNÉ` finds it too, `cote` finds `Côte d'Ivoire`) via
+`normalize('NFD')`. Ranking puts prefix matches above substring matches, and
+**African countries above the rest within each** — that is the audience. With
+nothing typed yet, the list offers African countries as a hint.
+
+Someone who types a full name and tabs away without touching the list still gets
+resolved, and so does a query with exactly one match. Anything left unresolved
+clears the select and is refused by the form, with the field outlined in
+`--rust` — but only after they leave it, not on the first keystroke.
+
+Keyboard: ↓ ↑ to move, Enter to take, Escape to close. The list is a
+`role="listbox"` driven by `aria-activedescendant`, the input a `role="combobox"`.
+
 ## English and French
 
 One page, one URL, a `EN | FR` switch at the top right. **Every visible string
