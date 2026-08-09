@@ -17,14 +17,24 @@ The form does nothing until you paste an endpoint. Open `index.html`, find:
 
 ```js
 var WAITLIST_ENDPOINT = '';
+var WAITLIST_FORMAT = 'mailerlite';   // 'mailerlite' | 'plain'
 ```
 
-Create a form on [formspree.io](https://formspree.io) (free tier: 50 submissions
-a month) and paste its endpoint:
+**MailerLite** — create an embedded form, then
+*Forms → Embedded forms → your form → Overview → "Embed form to your website" →
+HTML tab*. Inside that snippet is a `<form action="…">`; that URL is the
+endpoint. Keep `WAITLIST_FORMAT` as `'mailerlite'` so the payload is namespaced
+the way MailerLite expects (`fields[name]`, `fields[email]`, plus `ml-submit`
+and `anticsrf`).
 
-```js
-var WAITLIST_ENDPOINT = 'https://formspree.io/f/abcdwxyz';
-```
+**Formspree, Buttondown, ConvertKit, Mailchimp** — paste their endpoint and set
+`WAITLIST_FORMAT` to `'plain'`, which sends flat field names.
+
+Whichever you pick, **send one real test signup and confirm it lands** before
+spending on ads. These embedded endpoints sometimes answer without CORS headers,
+in which case the browser reports a failure even though the subscriber was
+created — the page would then show an error to a visitor who did get added.
+That is the one failure mode worth checking by hand.
 
 While the constant is empty the form **refuses to submit** and says so on screen,
 so a signup can never be silently dropped.
@@ -33,15 +43,14 @@ The page sends a normal `multipart/form-data` POST and expects any 2xx back, so
 Buttondown (`https://buttondown.email/api/emails/embed-subscribe/<user>`),
 ConvertKit and Mailchimp's embedded endpoints work the same way. Fields sent:
 
-| field          | value                                            |
-|----------------|--------------------------------------------------|
-| `first`        | first name, trimmed                              |
-| `email`        | email address                                    |
-| `country`      | readable name, e.g. `Senegal` — **required**     |
-| `country_code` | ISO 3166-1 alpha-2, e.g. `SN`                    |
-| `platform`     | `iOS`, `Android` or `not specified`              |
-| `consent`      | `yes` (the form won't submit without it)         |
-| `_subject`     | notification subject line for Formspree          |
+| meaning          | `plain`        | `mailerlite`            |
+|------------------|----------------|-------------------------|
+| first name       | `first`        | `fields[name]`          |
+| email            | `email`        | `fields[email]`         |
+| country, readable| `country`      | `fields[country]`       |
+| ISO 3166-1 code  | `country_code` | `fields[country_code]`  |
+| iOS / Android    | `platform`     | `fields[platform]`      |
+| consent ticked   | `consent`      | — (the form won't submit without it either way) |
 
 Both the country name and its code are sent on purpose: a column full of `SN` is
 useless without a lookup table, and a column full of names is awkward to group
@@ -263,13 +272,17 @@ Three deliberate changes, all easy to revert:
    if a larger export exists, drop it in and re-run `make-images.swift`.
 2. **Footer contrast.** `rgba(247,242,232,.34)` on `#12100D` is roughly 3:1 —
    under the WCAG AA floor for body text. Raised to `.48`/`.55`.
-3. **The chips stayed a flat list of 12 dishes.** A "one country, one menu"
-   section with three flagged countries was mocked up and rejected: pinning the
-   page to Senegal, Cameroon and Côte d'Ivoire creates the very promise-break
-   it was meant to fix for every *other* country advertised to. Matching an ad
-   to the page is better done with a campaign parameter (`?c=cm` → lead with
-   Cameroon, pre-fill the country field), which serves all 262 countries
-   already in the form. Not built yet.
+3. **No dish chips, and no country blocks.** A "one country, one menu" section
+   with three flagged countries was mocked up and rejected: pinning the page to
+   Senegal, Cameroon and Côte d'Ivoire recreates the promise-break it was meant
+   to fix, for every *other* country advertised to. The lede paragraph carries
+   the journey in prose instead, naming both the countries and the dishes — at
+   which point a 12-chip list repeated it word for word, pushed the submit
+   button below the fold on a 1280×760 laptop, and was removed.
+
+   Matching an ad to the page is better done with a campaign parameter
+   (`?c=cm` → lead with Cameroon, pre-fill the country field), which serves all
+   262 countries already in the form. **Not built yet.**
 
 Faithful to the mockups: the recipe chips (Thieboudienne / Mafé / Poulet DG /
 Ndolé) appear on desktop only — mobile option `1c` doesn't have them. Deleting

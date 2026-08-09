@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Taste of Africa — a mobile cooking game. Join the waitlist.</title>
-<meta name="description" content="Juggle thieboudienne, mafé and poulet DG at once in a busy African kitchen. Prep, assemble, fire, plate — before the table walks out. Coming soon on iOS and Android. Join the waitlist.">
+<meta name="description" content="Cook your way across Africa, one country at a time. Senegal, Cameroon, Côte d’Ivoire and more — thieb, mafé, garba, ndolé, poulet DG. Serve every plate before the table walks out. Coming soon on iOS and Android.">
 <link rel="canonical" href="https://tasteofafrica.app/">
 <meta name="theme-color" content="#12100D">
 <meta name="color-scheme" content="dark">
@@ -252,35 +252,6 @@ a:hover { color: var(--amber-hi); }
   font: 500 14.5px/1.55 var(--display);
   color: rgba(247, 242, 232, .66);
   text-wrap: pretty;
-}
-
-/* Recipe chips. The design had four of these on desktop only, but the point
-   they make — the game spans the continent — is worth making on a phone too,
-   where most of the ad traffic will land. */
-.chips__label {
-  margin: 18px 0 9px;
-  font: 600 9.5px/1 var(--mono);
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: rgba(247, 242, 232, .42);
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.chips li {
-  font: 500 10.5px/1 var(--mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(247, 242, 232, .16);
-  color: rgba(247, 242, 232, .66);
 }
 
 /* ── the waitlist ticket ───────────────────────────────────── */
@@ -627,20 +598,6 @@ a:hover { color: var(--amber-hi); }
     color: rgba(247, 242, 232, .78);
   }
 
-  .chips__label { margin: 26px 0 11px; font-size: 10px; color: rgba(247, 242, 232, .52); }
-
-  .chips { gap: 8px; }
-  .chips li {
-    font-size: 11.5px;
-    letter-spacing: .08em;
-    padding: 9px 13px;
-    border-color: rgba(247, 242, 232, .24);
-    color: rgba(247, 242, 232, .82);
-    background: rgba(18, 16, 13, .34);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
   .ticket {
     flex: none;
     width: 100%;
@@ -697,7 +654,6 @@ a:hover { color: var(--amber-hi); }
   .colophon { padding-bottom: 30px; }
   .lede h1 { font-size: clamp(42px, 4.4vw, 58px); }
   .lede p { margin-top: 16px; font-size: 17px; }
-  .chips__label { margin: 18px 0 8px; }
   .reel__label { bottom: 40px; }
 }
 
@@ -824,22 +780,7 @@ a:hover { color: var(--amber-hi); }
 
     <div class="lede">
       <h1 data-i18n-html="headline">Table&nbsp;4 is<br class="break-mobile"> still waiting.</h1>
-      <p data-i18n="lede">Juggle thieb, mafé and poulet DG at once in a busy African kitchen. More clients, more steps, less time — one missed plate and service falls apart.</p>
-      <p class="chips__label" data-i18n="chipsLabel">From across the continent</p>
-      <ul class="chips">
-        <li>Thieboudienne</li>
-        <li data-i18n="chipJollof">Jollof Rice</li>
-        <li>Mafé</li>
-        <li>Poulet DG</li>
-        <li>Ndolé</li>
-        <li>Moambé</li>
-        <li>Doro Wat</li>
-        <li>Nyama Choma</li>
-        <li data-i18n="chipTagine">Tagine</li>
-        <li>Koshari</li>
-        <li>Bobotie</li>
-        <li data-i18n="chipPiri">Piri-Piri Chicken</li>
-      </ul>
+      <p data-i18n="lede">Cook your way across Africa, one country at a time. Start in Senegal, Cameroon and Côte d’Ivoire — juggle thieb, mafé, garba, ndolé and poulet DG in a kitchen that never slows down. More clients, more steps, less time. One missed plate and service falls apart. More countries. More menus. The journey is just getting started.</p>
     </div>
 
     <section class="ticket" id="waitlist" data-state="open" aria-labelledby="ticket-title">
@@ -1202,17 +1143,22 @@ a:hover { color: var(--amber-hi); }
   /* ════════════════════════════════════════════════════════════
      ▼ THE ONE THING TO FILL IN BEFORE GOING LIVE ▼
 
-     Paste the Formspree form endpoint here. Create a form at
-     https://formspree.io → the endpoint looks like:
+     Where signups go. Paste the POST URL of your form here.
 
-       https://formspree.io/f/abcdwxyz
+     MailerLite: Forms → Embedded forms → your form → Overview →
+     "Embed form to your website" → HTML tab. Inside that snippet is a
+     <form action="..."> — that URL is what goes below, and set
+     WAITLIST_FORMAT to 'mailerlite' so the field names are mapped to
+     the fields[...] shape MailerLite expects.
 
-     Buttondown, ConvertKit and Mailchimp all expose a plain POST
-     endpoint too — anything that accepts a form POST works, see README.
-     While this is empty the form refuses to submit and says so, so a
-     signup can never be silently dropped.
+     Formspree, Buttondown, ConvertKit, Mailchimp: paste their endpoint
+     and leave WAITLIST_FORMAT as 'plain'.
+
+     While the endpoint is empty the form refuses to submit and says so
+     on screen, so a signup can never be silently dropped.
      ════════════════════════════════════════════════════════════ */
   var WAITLIST_ENDPOINT = '';
+  var WAITLIST_FORMAT = 'mailerlite';   // 'mailerlite' | 'plain'
 
   /* ── English / French ─────────────────────────────────────────
      Every visible string lives here. In the markup, elements carry
@@ -1226,7 +1172,7 @@ a:hover { color: var(--amber-hi); }
   var T = {
     en: {
       title:        'Taste of Africa — a mobile cooking game. Join the waitlist.',
-      metaDesc:     'Juggle thieboudienne, jollof rice, doro wat and tagine at once in a busy African kitchen. Prep, assemble, fire, plate — before the table walks out. Coming soon on iOS and Android.',
+      metaDesc:     'Cook your way across Africa, one country at a time. Senegal, Cameroon, Côte d\u2019Ivoire and more — thieb, mafé, garba, ndolé, poulet DG. Serve every plate before the table walks out. Coming soon on iOS and Android.',
       skip:         'Skip to the waitlist form',
       langGroup:    'Language',
       badgeShort:   'COMING SOON',
@@ -1235,11 +1181,7 @@ a:hover { color: var(--amber-hi); }
       reelLabel:    'THE LUNCH RUSH',
       /* non-breaking space: "Table 4" must never split across lines */
       headline:     'Table&nbsp;4 is<br class="break-mobile"> still waiting.',
-      lede:         'Juggle thieb, mafé and poulet DG at once in a busy African kitchen. More clients, more steps, less time — one missed plate and service falls apart.',
-      chipsLabel:   'From across the continent',
-      chipJollof:   'Jollof Rice',
-      chipTagine:   'Tagine',
-      chipPiri:     'Piri-Piri Chicken',
+      lede:         'Cook your way across Africa, one country at a time. Start in Senegal, Cameroon and Côte d\u2019Ivoire — juggle thieb, mafé, garba, ndolé and poulet DG in a kitchen that never slows down. More clients, more steps, less time. One missed plate and service falls apart. More countries. More menus. The journey is just getting started.',
       ticketHead:   'WAITLIST TICKET',
       labelFirst:   'First name',
       labelEmail:   'Email',
@@ -1273,7 +1215,7 @@ a:hover { color: var(--amber-hi); }
     },
     fr: {
       title:        'Taste of Africa — un jeu de cuisine mobile. Rejoins la liste d’attente.',
-      metaDesc:     'Enchaîne thieb, riz jollof, doro wat et tajine dans une cuisine africaine sous pression. Prépare, assemble, lance la cuisson, sers — avant que la table ne parte. Ouverture imminente sur iOS et Android.',
+      metaDesc:     'Cuisine à travers l\u2019Afrique, un pays après l\u2019autre. Sénégal, Cameroun, Côte d\u2019Ivoire et plus — thieb, mafé, garba, ndolé, poulet DG. Sers chaque plat avant que la table ne parte. Ouverture imminente sur iOS et Android.',
       skip:         'Aller au formulaire d’inscription',
       langGroup:    'Langue',
       badgeShort:   'OUVERTURE IMMINENTE',
@@ -1281,11 +1223,7 @@ a:hover { color: var(--amber-hi); }
       heroAlt:      'Des clients pressés au comptoir d’un restaurant ouest-africain, attendant leur commande',
       reelLabel:    'LE COUP DE FEU',
       headline:     'La table&nbsp;4<br class="break-mobile"> attend toujours.',
-      lede:         'Enchaîne thieb, mafé et poulet DG dans une cuisine africaine sous pression. Plus de clients, plus d’étapes, moins de temps — un plat manqué et le service s’écroule.',
-      chipsLabel:   'De tout le continent',
-      chipJollof:   'Riz Jollof',
-      chipTagine:   'Tajine',
-      chipPiri:     'Poulet Piri-Piri',
+      lede:         'Cuisine à travers l\u2019Afrique, un pays après l\u2019autre. Ça commence au Sénégal, au Cameroun et en Côte d\u2019Ivoire — enchaîne thieb, mafé, garba, ndolé et poulet DG dans une cuisine qui ne ralentit jamais. Plus de clients, plus d\u2019étapes, moins de temps. Un plat manqué et le service s\u2019écroule. D\u2019autres pays. D\u2019autres menus. Le voyage ne fait que commencer.',
       ticketHead:   'TICKET D’ATTENTE',
       labelFirst:   'Prénom',
       labelEmail:   'E-mail',
@@ -1676,20 +1614,37 @@ a:hover { color: var(--amber-hi); }
     button.disabled = true;
     button.textContent = t('sending');
 
-    data.set('first', first);
-    data.set('email', email);
-    /* Send the readable country name as well as the ISO code — a column full
-       of "SN" is useless without a lookup table. */
-    data.set('country_code', data.get('country').toString());
-    data.set('country', form.country.options[form.country.selectedIndex].text);
-    data.set('platform', (data.get('platform') || 'not specified').toString());
-    data.set('consent', 'yes');
-    data.set('_subject', 'Taste of Africa — new waitlist signup');
-    data.delete('_gotcha');
+    /* The readable country name AND the ISO code: a column full of "SN" is
+       useless without a lookup table, one full of names is awkward to group. */
+    var code = data.get('country').toString();
+    var country = form.country.options[form.country.selectedIndex].text;
+    var platform = (data.get('platform') || 'not specified').toString();
+
+    var payload = new FormData();
+    if (WAITLIST_FORMAT === 'mailerlite') {
+      /* MailerLite's embedded-form endpoint namespaces everything under
+         fields[...]. country, country_code and platform need matching
+         custom fields created in MailerLite, or they are dropped. */
+      payload.set('fields[name]', first);
+      payload.set('fields[email]', email);
+      payload.set('fields[country]', country);
+      payload.set('fields[country_code]', code);
+      payload.set('fields[platform]', platform);
+      payload.set('ml-submit', '1');
+      payload.set('anticsrf', 'true');
+    } else {
+      payload.set('first', first);
+      payload.set('email', email);
+      payload.set('country', country);
+      payload.set('country_code', code);
+      payload.set('platform', platform);
+      payload.set('consent', 'yes');
+      payload.set('_subject', 'Taste of Africa — new waitlist signup');
+    }
 
     fetch(WAITLIST_ENDPOINT, {
       method: 'POST',
-      body: data,
+      body: payload,
       headers: { Accept: 'application/json' }
     })
       .then(function (response) {
