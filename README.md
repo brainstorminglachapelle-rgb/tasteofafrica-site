@@ -2,9 +2,8 @@
 
 A single static page for **Taste of Africa**, a mobile cooking game set in a busy
 African restaurant. Built from the Claude Design handoff: mobile is option `1c`,
-desktop is the full-bleed treatment the handoff suggested as a next step
-("make the video full-bleed behind everything in 2a") rather than `2a`'s split
-column.
+desktop is a two-column split — content left, the hero picture in a tall panel
+on the right.
 
 No build step, no framework. Open `index.html` and it works. The only
 third-party request the page can ever make is the Meta pixel, and it stays
@@ -105,8 +104,8 @@ language — and the list is re-sorted alphabetically for the active language
 (French starts at "Afrique du Sud", English at "Algeria"). A visitor's
 already-picked country survives the switch.
 
-Text that depends on state as well as language — the video's play/pause label,
-the current error message, the "Order in, Aminata." confirmation — re-renders
+Text that depends on state as well as language — the current error message, the
+"Order in, Aminata." confirmation, the country field's visible label — re-renders
 through the `restate` array, so switching language mid-session never leaves a
 stale sentence on screen.
 
@@ -161,8 +160,10 @@ Emptying `PIXEL_ID` disables the whole thing, bar included.
 index.html                 the whole page — markup, CSS and JS
 404.html                   branded not-found page
 assets/
-  intro.mp4                the gameplay clip (784×470, 5 s, silent, 630 kB)
-  poster.jpg               first frame — stands in until the clip plays
+  hero.jpg                 the hero picture (960×1538, 312 kB)
+  intro.mp4                the old intro clip — no longer used by the page,
+                           kept because it is still useful for ad creative
+  poster.jpg               its first frame — likewise unused now
   og.jpg                   1200×630 social preview card
   logo.png                 256×256 round badge — the header mark
   favicon-32/48.png        the simplified ring mark (see Logo below)
@@ -230,12 +231,12 @@ cut-out halo. The cream disc is what makes it sit correctly on the dark page.
 
 ### Regenerating the images
 
-`poster.jpg`, `og.jpg` and `apple-touch-icon.png` are all derived from
-`assets/intro.mp4` by `tools/make-images.swift` (macOS, no dependencies):
+`hero.jpg` and `og.jpg` are both derived from `tools/hero-master.png` by
+`tools/make-images.swift` (macOS, no dependencies):
 
 ```bash
 node tools/fetch-fonts.mjs .          # only needed once, for the TTFs below
-swift tools/make-images.swift assets/intro.mp4 assets tools/ttf
+swift tools/make-images.swift tools/hero-master.png assets tools/ttf
 ```
 
 The OG card is typeset in the real Bricolage Grotesque, loaded from
@@ -247,17 +248,28 @@ The OG card is typeset in the real Bricolage Grotesque, loaded from
 
 Three deliberate changes, all easy to revert:
 
-1. **Desktop layout: full-bleed, not `2a`'s split column.** The clip is
-   landscape (784×470, ratio 1.67). Filling `2a`'s ~400×900 column with
-   `object-fit: cover` crops away about 60% of the frame — the chef's head and
-   the stove both disappear. Stretched across a 16:10 window instead, the same
-   cover crop loses barely 4%. So the footage fills the viewport (`position:
-   fixed`) and the headline, chips and ticket float over it, gathered at the
-   foot behind a vertical scrim. The form still lands above the fold.
+1. **The hero is a picture, not the video, and it drives the layout.** The
+   artwork (`tools/hero-master.png`, 960×1538) is portrait. Full-bleed across a
+   16:10 window, a cover crop keeps two faces and throws away the queue of
+   waiting customers — the whole subject of the shot. So it gets a tall panel:
+   `clamp(320px, 30vw, 440px)`, one viewport high and `sticky`, which keeps
+   about 75% of its width at 1280px. Two consequences worth knowing:
+   the panel is capped at `100dvh` because a grid row would otherwise stretch
+   it to the full scroll height and the crop would eat the scene; and the left
+   column only splits into headline-beside-ticket above **1250px**, below which
+   it cannot carry both and stacks them instead.
+
+   The master is only 960px wide, which is thin for a panel on a 2× display —
+   if a larger export exists, drop it in and re-run `make-images.swift`.
 2. **Footer contrast.** `rgba(247,242,232,.34)` on `#12100D` is roughly 3:1 —
    under the WCAG AA floor for body text. Raised to `.48`/`.55`.
-3. **A pause control on the video**, and no autoplay at all when the visitor has
-   `prefers-reduced-motion: reduce` set.
+3. **The chips stayed a flat list of 12 dishes.** A "one country, one menu"
+   section with three flagged countries was mocked up and rejected: pinning the
+   page to Senegal, Cameroon and Côte d'Ivoire creates the very promise-break
+   it was meant to fix for every *other* country advertised to. Matching an ad
+   to the page is better done with a campaign parameter (`?c=cm` → lead with
+   Cameroon, pre-fill the country field), which serves all 262 countries
+   already in the form. Not built yet.
 
 Faithful to the mockups: the recipe chips (Thieboudienne / Mafé / Poulet DG /
 Ndolé) appear on desktop only — mobile option `1c` doesn't have them. Deleting

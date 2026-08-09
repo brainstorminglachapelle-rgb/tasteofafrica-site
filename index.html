@@ -30,6 +30,7 @@
 <link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preload" as="image" href="assets/logo.png">
+<link rel="preload" as="image" href="assets/hero.jpg">
 
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/bricolage-grotesque-latin.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-mono-500-latin.woff2" crossorigin>
@@ -226,24 +227,6 @@ a:hover { color: var(--amber-hi); }
   pointer-events: none;
 }
 
-.reel__toggle {
-  position: absolute; right: 12px; bottom: 10px;
-  width: 34px; height: 34px;
-  display: grid; place-items: center;
-  border: 1px solid rgba(247, 242, 232, .28);
-  border-radius: 50%;
-  background: rgba(18, 16, 13, .55);
-  color: var(--cream);
-  cursor: pointer;
-  padding: 0;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-.reel__toggle:hover { border-color: rgba(247, 242, 232, .6); }
-.reel__toggle svg { width: 13px; height: 13px; fill: currentColor; }
-.reel__toggle .icon-play { display: none; }
-.reel__toggle[data-paused="true"] .icon-play { display: block; }
-.reel__toggle[data-paused="true"] .icon-pause { display: none; }
 
 /* ── body: lede + ticket ───────────────────────────────────── */
 
@@ -556,9 +539,11 @@ a:hover { color: var(--amber-hi); }
 .colophon .colophon-long { display: none; }
 
 /* ─────────────────────────────────────────────────────────────
-   Desktop — the clip fills the screen, everything else floats on top.
-   The source video is 784×470 (ratio 1.67), so a cover crop on a 16:10
-   window loses almost nothing — unlike the split column it replaces.
+   Desktop — content left, the picture in a tall panel on the right.
+   The hero is portrait (960×1538). Stretched full-bleed across a 16:10
+   window a cover crop keeps two faces and throws away the queue of
+   waiting customers, which is the whole point of the shot. A tall panel
+   costs about a fifth of its width instead, and the scene survives.
    ───────────────────────────────────────────────────────────── */
 
 @media (min-width: 900px) {
@@ -572,22 +557,30 @@ a:hover { color: var(--amber-hi); }
     gap: 0;
     min-height: 100vh;
     min-height: 100dvh;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 30vw, 440px);
     grid-template-areas:
-      "topbar"
-      "masthead"
-      "body"
-      "colophon";
+      "topbar   reel"
+      "masthead reel"
+      "body     reel"
+      "colophon reel";
     grid-template-rows: auto auto 1fr auto;
   }
 
   .topbar { padding: 30px var(--gutter) 0; }
   .langswitch__btn { min-width: 44px; min-height: 30px; font-size: 11px; }
 
-  /* the footage sits behind everything; content layers must be lifted above it */
-  .reel { position: fixed; inset: 0; z-index: 0; }
-  .topbar, .masthead, .body, .colophon { position: relative; z-index: 1; }
-
+  /* One screen tall, never more: on a narrow window the grid row would
+     stretch it to the full scroll height and the crop would eat the
+     scene. Sticky so it stays put while the left column scrolls. */
+  .reel {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: #000;
+  }
   .reel__frame { position: absolute; inset: 0; border: none; border-radius: 0; }
   .reel__video {
     width: 100%;
@@ -599,18 +592,10 @@ a:hover { color: var(--amber-hi); }
     inset: 0;
     height: auto;
     background:
-      linear-gradient(180deg, rgba(18, 16, 13, .88) 0%, rgba(18, 16, 13, .34) 26%,
-                              rgba(18, 16, 13, .5) 52%, rgba(18, 16, 13, .93) 88%, #12100D 100%),
-      linear-gradient(90deg, rgba(18, 16, 13, .62) 0%, rgba(18, 16, 13, 0) 55%);
+      linear-gradient(90deg, rgba(18, 16, 13, .72) 0%, rgba(18, 16, 13, .06) 34%, rgba(18, 16, 13, 0) 70%),
+      linear-gradient(180deg, rgba(18, 16, 13, 0) 60%, rgba(18, 16, 13, .88) 100%);
   }
-  .reel__label {
-    left: auto;
-    right: calc(var(--gutter) + 48px);
-    bottom: 58px;
-    font-size: 11.5px;
-    letter-spacing: .14em;
-  }
-  .reel__toggle { right: var(--gutter); bottom: 48px; }
+  .reel__label { left: 26px; bottom: 26px; font-size: 11.5px; letter-spacing: .14em; }
 
   .masthead { padding: 18px var(--gutter) 0; }
   .wordmark__mark { width: 64px; height: 64px; }
@@ -620,25 +605,25 @@ a:hover { color: var(--amber-hi); }
   .launch-badge .badge-long { display: inline; }
 
   .body {
-    flex-direction: row;
-    align-items: flex-end;   /* headline and ticket share a baseline at the foot */
+    flex-direction: column;
+    align-items: stretch;
     align-self: end;
-    gap: 52px;
-    padding: 40px var(--gutter) 30px;
+    gap: 26px;
+    padding: 34px var(--gutter) 28px;
   }
 
   .lede { flex: 1; max-width: 540px; }
   .lede h1 {
-    font-size: clamp(48px, 5.2vw, 74px);
+    font-size: clamp(40px, 3.9vw, 60px);
     line-height: .96;
     letter-spacing: -.03em;
     text-shadow: 0 2px 30px rgba(0, 0, 0, .5);
   }
   .lede h1 .break-mobile { display: none; }
   .lede p {
-    margin-top: 22px;
-    font-size: 19px;
-    max-width: 470px;
+    margin-top: 20px;
+    font-size: 17px;
+    max-width: 420px;
     color: rgba(247, 242, 232, .78);
   }
 
@@ -658,7 +643,8 @@ a:hover { color: var(--amber-hi); }
 
   .ticket {
     flex: none;
-    width: 384px;
+    width: 100%;
+    max-width: 400px;
     border-radius: 10px;
     padding: 26px 24px 24px;
     box-shadow: 0 26px 64px rgba(0, 0, 0, .6);
@@ -690,6 +676,18 @@ a:hover { color: var(--amber-hi); }
   .colophon .colophon-long { display: inline; }
 }
 
+/* Wide enough for the headline and the ticket to sit side by side.
+   Below this the left column is too narrow to carry both. */
+@media (min-width: 1250px) {
+  .body {
+    flex-direction: row;
+    align-items: flex-end;   /* headline and ticket share a baseline at the foot */
+    gap: 34px;
+    padding: 40px var(--gutter) 30px;
+  }
+  .ticket { width: 356px; max-width: none; }
+}
+
 /* Short desktop windows: tighten the margins rather than let the ticket
    push the headline off screen. The clip is fixed, so scrolling is fine. */
 @media (min-width: 900px) and (max-height: 780px) {
@@ -701,7 +699,6 @@ a:hover { color: var(--amber-hi); }
   .lede p { margin-top: 16px; font-size: 17px; }
   .chips__label { margin: 18px 0 8px; }
   .reel__label { bottom: 40px; }
-  .reel__toggle { bottom: 30px; }
 }
 
 /* ── tracking consent bar ─────────────────────────────────── */
@@ -810,21 +807,16 @@ a:hover { color: var(--amber-hi); }
 
   <div class="reel">
     <div class="reel__frame">
-      <video
+      <img
         class="reel__video"
-        src="assets/intro.mp4"
-        poster="assets/poster.jpg"
-        preload="metadata"
-        muted loop playsinline autoplay
-        disablepictureinpicture
-        data-i18n-aria="videoAlt"
-        aria-label="Early gameplay: a chef prepping ingredients in a busy African kitchen"></video>
+        src="assets/hero.jpg"
+        width="960" height="1538"
+        fetchpriority="high"
+        decoding="async"
+        data-i18n-alt="heroAlt"
+        alt="Customers crowding the counter of a West African restaurant, waiting for their orders">
       <div class="reel__scrim" aria-hidden="true"></div>
-      <p class="reel__label" data-i18n="reelLabel">EARLY GAMEPLAY</p>
-      <button class="reel__toggle" type="button" data-paused="false" aria-label="Pause the video">
-        <svg class="icon-pause" viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0h4v14H0zM8 0h4v14H8z"/></svg>
-        <svg class="icon-play" viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
-      </button>
+      <p class="reel__label" data-i18n="reelLabel">THE LUNCH RUSH</p>
     </div>
   </div>
 
@@ -1239,10 +1231,8 @@ a:hover { color: var(--amber-hi); }
       langGroup:    'Language',
       badgeShort:   'COMING SOON',
       badgeLong:    'COMING SOON · iOS & ANDROID',
-      videoAlt:     'Early gameplay: a chef prepping ingredients in a busy African kitchen',
-      reelLabel:    'EARLY GAMEPLAY',
-      videoPlay:    'Play the video',
-      videoPause:   'Pause the video',
+      heroAlt:      'Customers crowding the counter of a West African restaurant, waiting for their orders',
+      reelLabel:    'THE LUNCH RUSH',
       /* non-breaking space: "Table 4" must never split across lines */
       headline:     'Table&nbsp;4 is<br class="break-mobile"> still waiting.',
       lede:         'Juggle thieb, mafé and poulet DG at once in a busy African kitchen. More clients, more steps, less time — one missed plate and service falls apart.',
@@ -1288,10 +1278,8 @@ a:hover { color: var(--amber-hi); }
       langGroup:    'Langue',
       badgeShort:   'OUVERTURE IMMINENTE',
       badgeLong:    'OUVERTURE IMMINENTE · iOS & ANDROID',
-      videoAlt:     'Images de jeu : un chef prépare des ingrédients dans une cuisine africaine animée',
-      reelLabel:    'IMAGES DE JEU',
-      videoPlay:    'Lire la vidéo',
-      videoPause:   'Mettre la vidéo en pause',
+      heroAlt:      'Des clients pressés au comptoir d’un restaurant ouest-africain, attendant leur commande',
+      reelLabel:    'LE COUP DE FEU',
       headline:     'La table&nbsp;4<br class="break-mobile"> attend toujours.',
       lede:         'Enchaîne thieb, mafé et poulet DG dans une cuisine africaine sous pression. Plus de clients, plus d’étapes, moins de temps — un plat manqué et le service s’écroule.',
       chipsLabel:   'De tout le continent',
@@ -1380,6 +1368,7 @@ a:hover { color: var(--amber-hi); }
     each('[data-i18n-html]', function (el) { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
     each('[data-i18n-ph]', function (el) { el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph'))); });
     each('[data-i18n-aria]', function (el) { el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
+    each('[data-i18n-alt]', function (el) { el.setAttribute('alt', t(el.getAttribute('data-i18n-alt'))); });
     each('[data-i18n-label]', function (el) { el.setAttribute('label', t(el.getAttribute('data-i18n-label'))); });
 
     localiseCountries();
@@ -1631,49 +1620,6 @@ a:hover { color: var(--amber-hi); }
       bar.hidden = true;
       if (hit.dataset.consent === 'granted') loadPixel();
     });
-  }
-
-  /* ── video: autoplay, with a real pause control ───────────── */
-
-  var video  = document.querySelector('.reel__video');
-  var toggle = document.querySelector('.reel__toggle');
-
-  if (video && toggle) {
-    var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-    /* What the visitor wants, kept apart from what the video is doing right
-       now — the browser pauses playback on its own when the tab goes away,
-       and that must not be mistaken for someone hitting the pause button. */
-    var wantsPlaying = !calm.matches;
-
-    var sync = function () {
-      var paused = video.paused;
-      toggle.dataset.paused = paused ? 'true' : 'false';
-      toggle.setAttribute('aria-label', t(paused ? 'videoPlay' : 'videoPause'));
-    };
-    restate.push(sync);
-
-    var start = function () {
-      video.muted = true;                    // required for autoplay everywhere
-      var p = video.play();
-      if (p && p.catch) p.catch(function () { /* blocked: the poster + button stand in */ });
-    };
-
-    if (wantsPlaying) start(); else { video.autoplay = false; video.pause(); }
-
-    toggle.addEventListener('click', function () {
-      wantsPlaying = video.paused;
-      if (wantsPlaying) start(); else video.pause();
-    });
-    video.addEventListener('play', sync);
-    video.addEventListener('pause', sync);
-
-    // Some browsers stall the clip while the tab is away and never resume it.
-    document.addEventListener('visibilitychange', function () {
-      if (!document.hidden && wantsPlaying && video.paused) start();
-    });
-
-    sync();
   }
 
   /* ── waitlist form ────────────────────────────────────────── */
