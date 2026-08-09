@@ -99,7 +99,7 @@ draw("TASTE OF AFRICA", font("BricolageGrotesque-ExtraBold", 21), cream, kern: 2
 // headline, bottom-left
 draw("Table 4 is", font("BricolageGrotesque-ExtraBold", 86), cream, kern: -2.4, at: CGPoint(x: 62, y: 232), in: c)
 draw("still waiting.", font("BricolageGrotesque-ExtraBold", 86), cream, kern: -2.4, at: CGPoint(x: 62, y: 138), in: c)
-draw("A MOBILE COOKING GAME · SOFT LAUNCH 2027", font("IBMPlexMono-SemiBold", 19), amber, kern: 2.6,
+draw("A MOBILE COOKING GAME · COMING SOON", font("IBMPlexMono-SemiBold", 19), amber, kern: 2.6,
      at: CGPoint(x: 64, y: 76), in: c)
 writeJPEG(c.makeImage()!, "og.jpg", 0.84)
 
