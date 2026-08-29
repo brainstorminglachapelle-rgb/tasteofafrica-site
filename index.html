@@ -6,8 +6,8 @@
 <title>Taste of Africa — a mobile cooking game. Join the waitlist.</title>
 <meta name="description" content="Cook your way across Africa, one country at a time. Senegal, Cameroon, Côte d’Ivoire and more — thieb, mafé, garba, ndolé, poulet DG. Serve every plate before the table walks out. Coming soon on iOS and Android.">
 <link rel="canonical" href="https://tasteofafrica.app/">
-<meta name="theme-color" content="#12100D">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#F2EADC">
+<meta name="color-scheme" content="light">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Taste of Africa">
@@ -43,13 +43,16 @@
    ───────────────────────────────────────────────────────────── */
 
 :root {
-  --ink:        #12100D;   /* page background          */
-  --ink-warm:   #16120E;   /* text on paper            */
-  --cream:      #F7F2E8;   /* text on ink              */
-  --paper:      #FBF6EC;   /* the waitlist ticket      */
-  --amber:      #E8A33D;   /* accent / logo mark       */
+  /* Light theme. Three steps of warmth carry the hierarchy:
+     sand page → cream ticket → white input. */
+  --page:       #F2EADC;   /* page background — warm sand  */
+  --ink:        #16120E;   /* headings, primary text       */
+  --ink-warm:   #16120E;   /* text on paper (same ink)     */
+  --cream:      #F7F2E8;   /* text laid over the photograph */
+  --paper:      #FBF6EC;   /* the waitlist ticket          */
+  --amber:      #E8A33D;   /* accent, over imagery only    */
   --amber-hi:   #F5B455;
-  --rust:       #B4451F;   /* primary action           */
+  --rust:       #B4451F;   /* primary action, and links    */
   --rust-hi:    #C9552C;
 
   --display: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
@@ -64,19 +67,19 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  background: var(--ink);
-  color: var(--cream);
+  background: var(--page);
+  color: var(--ink);
   font-family: var(--display);
   font-weight: 500;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
 
-a { color: var(--amber); text-decoration: none; }
-a:hover { color: var(--amber-hi); }
+a { color: var(--rust); text-decoration: none; }
+a:hover { color: var(--rust-hi); }
 
 :focus-visible {
-  outline: 2px solid var(--amber);
+  outline: 2px solid var(--rust);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -126,9 +129,9 @@ a:hover { color: var(--amber-hi); }
   display: flex;
   gap: 2px;
   padding: 2px;
-  border: 1px solid rgba(247, 242, 232, .16);
+  border: 1px solid rgba(22, 18, 14, .14);
   border-radius: 999px;
-  background: rgba(18, 16, 13, .4);
+  background: rgba(255, 255, 255, .55);
 }
 
 .langswitch__btn {
@@ -138,15 +141,15 @@ a:hover { color: var(--amber-hi); }
   border: none;
   border-radius: 999px;
   background: transparent;
-  color: rgba(247, 242, 232, .55);
+  color: rgba(22, 18, 14, .66);
   font: 600 10.5px/1 var(--mono);
   letter-spacing: .1em;
   cursor: pointer;
 }
-.langswitch__btn:hover { color: var(--cream); }
+.langswitch__btn:hover { color: var(--ink); }
 .langswitch__btn[aria-pressed="true"] {
-  background: var(--cream);
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--page);
 }
 
 /* ── masthead ──────────────────────────────────────────────── */
@@ -168,6 +171,7 @@ a:hover { color: var(--amber-hi); }
   flex: none;
   display: block;
   border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(22, 18, 14, .10);
 }
 
 .wordmark__text {
@@ -183,7 +187,7 @@ a:hover { color: var(--amber-hi); }
 .launch-badge {
   font: 500 10px/1 var(--mono);
   letter-spacing: .1em;
-  color: rgba(247, 242, 232, .55);
+  color: rgba(22, 18, 14, .68);
   text-align: right;
 }
 .launch-badge .badge-long { display: none; }
@@ -199,8 +203,8 @@ a:hover { color: var(--amber-hi); }
   position: relative;
   border-radius: 22px;
   overflow: hidden;
-  border: 1px solid rgba(247, 242, 232, .12);
-  background: #000;
+  border: 1px solid rgba(22, 18, 14, .12);
+  background: var(--page);
 }
 
 .reel__video {
@@ -209,7 +213,7 @@ a:hover { color: var(--amber-hi); }
   height: 268px;
   object-fit: cover;
   object-position: 50% 45%;
-  background: #000;
+  background: var(--page);
 }
 
 .reel__scrim {
@@ -250,7 +254,7 @@ a:hover { color: var(--amber-hi); }
 .lede p {
   margin: 10px 0 0;
   font: 500 14.5px/1.55 var(--display);
-  color: rgba(247, 242, 232, .66);
+  color: rgba(22, 18, 14, .72);
   text-wrap: pretty;
 }
 
@@ -264,7 +268,8 @@ a:hover { color: var(--amber-hi); }
   color: var(--ink-warm);
   border-radius: 8px;
   padding: 20px 18px 18px;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, .35);
+  border: 1px solid rgba(22, 18, 14, .10);
+  box-shadow: 0 12px 30px rgba(22, 18, 14, .10);
 }
 
 .ticket__head {
@@ -273,7 +278,7 @@ a:hover { color: var(--amber-hi); }
   justify-content: space-between;
   font: 600 10.5px/1 var(--mono);
   letter-spacing: .14em;
-  color: rgba(22, 18, 14, .55);
+  color: rgba(22, 18, 14, .66);
 }
 
 .ticket__head h2 {
@@ -297,7 +302,8 @@ a:hover { color: var(--amber-hi); }
   padding-inline: 0;
   font: 600 9.5px/1 var(--mono);
   letter-spacing: .14em;
-  color: rgba(22, 18, 14, .5);
+  /* .5 measured 3.45:1 on the cream card — under the AA floor for 9.5px */
+  color: rgba(22, 18, 14, .64);
   text-transform: uppercase;
   padding: 0;
 }
@@ -507,7 +513,7 @@ a:hover { color: var(--amber-hi); }
   grid-area: colophon;
   margin: 0;
   font: 500 10.5px/1.4 var(--mono);
-  color: rgba(247, 242, 232, .48);
+  color: rgba(22, 18, 14, .68);
   text-align: center;
 }
 .colophon .colophon-long { display: none; }
@@ -553,7 +559,7 @@ a:hover { color: var(--amber-hi); }
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
-    background: #000;
+    background: var(--page);
   }
   .reel__frame { position: absolute; inset: 0; border: none; border-radius: 0; }
   .reel__video {
@@ -565,11 +571,22 @@ a:hover { color: var(--amber-hi); }
   .reel__scrim {
     inset: 0;
     height: auto;
+    /* left edge melts into the sand column; the foot stays dark so the
+       amber caption keeps its contrast against the photograph */
     background:
-      linear-gradient(90deg, rgba(18, 16, 13, .72) 0%, rgba(18, 16, 13, .06) 34%, rgba(18, 16, 13, 0) 70%),
-      linear-gradient(180deg, rgba(18, 16, 13, 0) 60%, rgba(18, 16, 13, .88) 100%);
+      linear-gradient(90deg, var(--page) 0%, rgba(242, 234, 220, .55) 16%, rgba(242, 234, 220, 0) 46%),
+      linear-gradient(180deg, rgba(18, 16, 13, 0) 62%, rgba(18, 16, 13, .82) 100%);
   }
-  .reel__label { left: 26px; bottom: 26px; font-size: 11.5px; letter-spacing: .14em; }
+  /* the left edge of the panel now fades into the sand page, so an amber
+     caption placed there has nothing to sit on — it moves to the right,
+     where the photograph keeps its full density */
+  .reel__label {
+    left: auto;
+    right: 26px;
+    bottom: 24px;
+    font-size: 11.5px;
+    letter-spacing: .14em;
+  }
 
   .masthead { padding: 18px var(--gutter) 0; }
   .wordmark__mark { width: 64px; height: 64px; }
@@ -591,14 +608,13 @@ a:hover { color: var(--amber-hi); }
     font-size: clamp(40px, 3.9vw, 60px);
     line-height: .96;
     letter-spacing: -.03em;
-    text-shadow: 0 2px 30px rgba(0, 0, 0, .5);
   }
   .lede h1 .break-mobile { display: none; }
   .lede p {
     margin-top: 20px;
     font-size: 17px;
     max-width: 420px;
-    color: rgba(247, 242, 232, .78);
+    color: rgba(22, 18, 14, .72);
   }
 
   .ticket {
@@ -607,7 +623,7 @@ a:hover { color: var(--amber-hi); }
     max-width: 400px;
     border-radius: 10px;
     padding: 26px 24px 24px;
-    box-shadow: 0 26px 64px rgba(0, 0, 0, .6);
+    box-shadow: 0 18px 44px rgba(22, 18, 14, .12);
   }
   .ticket__head { font-size: 11px; }
   .ticket__perf { margin: 16px 0 18px; }
@@ -630,7 +646,7 @@ a:hover { color: var(--amber-hi); }
     padding: 0 var(--gutter) 46px;
     text-align: left;
     font-size: 12px;
-    color: rgba(247, 242, 232, .55);
+    color: rgba(22, 18, 14, .64);
   }
   .colophon .colophon-long { display: inline; }
 }
@@ -680,7 +696,8 @@ a:hover { color: var(--amber-hi); }
   color: var(--ink-warm);
   border-radius: 10px;
   padding: 16px 16px 14px;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, .5);
+  border: 1px solid rgba(22, 18, 14, .10);
+  box-shadow: 0 14px 36px rgba(22, 18, 14, .16);
   display: flex;
   flex-direction: column;
   gap: 12px;

@@ -288,14 +288,38 @@ split screen (`2a`).
 
 ## Tokens
 
-| token       | value     | used for                        |
-|-------------|-----------|---------------------------------|
-| `--ink`     | `#12100D` | page background                 |
-| `--ink-warm`| `#16120E` | text on the ticket              |
-| `--cream`   | `#F7F2E8` | text on the dark background     |
-| `--paper`   | `#FBF6EC` | the waitlist ticket             |
-| `--amber`   | `#E8A33D` | logo mark, accents              |
-| `--rust`    | `#B4451F` | the primary button              |
+The page is **light**: a warm sand ground, a cream ticket, white input fields.
+Three steps of warmth carry the hierarchy, so nothing needs a heavy shadow.
+
+| token       | value     | used for                             |
+|-------------|-----------|--------------------------------------|
+| `--page`    | `#F2EADC` | page background — warm sand          |
+| `--paper`   | `#FBF6EC` | the waitlist ticket                  |
+| `--ink`     | `#16120E` | headings and primary text            |
+| `--cream`   | `#F7F2E8` | text laid **over the photograph** only |
+| `--amber`   | `#E8A33D` | accents over imagery only            |
+| `--rust`    | `#B4451F` | the primary button, and links        |
+
+**`--amber` is not a text colour on this page.** At `#E8A33D` on sand it fails
+contrast badly, so links use `--rust`; amber survives only where it sits on the
+photograph (the "THE LUNCH RUSH" caption).
+
+Every small-text colour was measured rather than eyeballed, and raised until it
+cleared the 4.5:1 AA floor: the colophon, the launch badge, the inactive
+language button, the ticket header and the field labels all sat between 3.4:1
+and 4.1:1 at first pass. The field labels had been under the floor since the
+original dark design.
+
+Two things the light theme forced, beyond swapping colours:
+
+1. **The desktop caption moved to the right of the panel.** The panel's left
+   edge now fades into the sand page instead of into near-black, so an amber
+   caption placed there had nothing to sit on.
+2. **The logo badge gained a hairline ring.** Its own field is cream, which
+   melts into a sand page without one.
+
+`assets/og.jpg` is deliberately left dark — it is a social preview card laid
+over the photograph, not a page, and dark cards read better in a feed.
 
 Type: **Bricolage Grotesque** (display, 500/700/800) and **IBM Plex Mono**
 (labels, 400/500/600).
