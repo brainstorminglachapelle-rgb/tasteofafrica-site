@@ -498,12 +498,18 @@ a:hover { color: var(--rust-hi); }
   padding: 6px 0 4px;
 }
 .done__title { font: 800 20px/1.15 var(--display); }
-.done__body { font: 500 13.5px/1.5 var(--display); color: rgba(22, 18, 14, .65); }
+.done__body { font: 500 13.5px/1.5 var(--display); color: rgba(22, 18, 14, .68); }
+
+.done__hint {
+  margin-top: 10px;
+  font: 500 12px/1.45 var(--display);
+  color: rgba(22, 18, 14, .62);
+}
 .done__stamp {
   margin-top: 6px;
   font: 600 10px/1 var(--mono);
   letter-spacing: .14em;
-  color: rgba(22, 18, 14, .45);
+  color: rgba(22, 18, 14, .6);
 }
 
 .ticket[data-state="open"] .done,
@@ -1133,6 +1139,7 @@ a:hover { color: var(--rust-hi); }
       <div class="done" role="status" aria-live="polite">
         <p class="done__title" data-i18n="doneTitle">Order in.</p>
         <p class="done__body" data-i18n="doneBody">One last step: open the email we just sent and confirm. Then we'll write the day the restaurant opens its doors.</p>
+        <p class="done__hint" data-i18n="doneHint">Nothing after a minute? Look in your spam folder — that first email often lands there.</p>
         <p class="done__stamp" data-i18n="doneStamp">SERVED · THANK YOU</p>
       </div>
     </section>
@@ -1223,6 +1230,7 @@ a:hover { color: var(--rust-hi); }
       doneTitle:    'Order in.',
       doneTitleName:'Order in, {name}.',
       doneBody:     "One last step: open the email we just sent and confirm. Then we'll write the day the restaurant opens its doors.",
+      doneHint:     'Nothing after a minute? Look in your spam folder — that first email often lands there.',
       doneStamp:    'SERVED · THANK YOU',
       colophon:     'tasteofafrica.app<span class="colophon-long"> · we only email about the game</span> · unsubscribe anytime',
       cookieTitle:  'Can we count the clicks?',
@@ -1265,6 +1273,7 @@ a:hover { color: var(--rust-hi); }
       doneTitle:    'Commande passée.',
       doneTitleName:'Commande passée, {name}.',
       doneBody:     'Dernière étape : ouvre l’e-mail qu’on vient de t’envoyer et confirme. On t’écrit ensuite le jour où le restaurant ouvre ses portes.',
+      doneHint:     'Rien au bout d’une minute ? Regarde dans tes spams, ce premier e-mail y atterrit souvent.',
       doneStamp:    'SERVI · MERCI',
       colophon:     'tasteofafrica.app<span class="colophon-long"> · on n’écrit que pour parler du jeu</span> · désinscription à tout moment',
       cookieTitle:  'On peut compter les clics ?',
