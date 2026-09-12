@@ -210,7 +210,8 @@ a:hover { color: var(--rust-hi); }
 .reel__video {
   display: block;
   width: 100%;
-  height: 268px;
+  height: auto;
+  aspect-ratio: 808 / 392;
   object-fit: cover;
   /* the band that shows on a phone: the queue of customers and their
      order tickets, with the pots along the bottom edge */
@@ -761,6 +762,63 @@ a:hover { color: var(--rust-hi); }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Gameplay compilation (808×392, landscape) — since 2026-09-12.
+   Everything above was laid out for a portrait clip; these rules
+   come last on purpose and win.
+
+   MOBILE, the priority: the clip runs edge to edge (375×182 on a
+   375px phone) — breaking out of the gutters buys 12% more height
+   without cropping a single station.
+
+   DESKTOP: the game sits in the middle column at full width
+   (710×344 at 1280px), the waitlist ticket is docked on the right,
+   and the submit button stays above the fold. A full-width band was
+   tried and measured worse: its crop lost the score bar and the dish
+   buttons, and it pushed the button below the fold.
+   ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 899px) {
+  .reel { margin-left: calc(-1 * var(--gutter)); margin-right: calc(-1 * var(--gutter)); }
+  .reel__frame { border-radius: 0; border-left: none; border-right: none; }
+}
+
+@media (min-width: 900px) {
+  .shell {
+    padding: 0 var(--gutter);
+    column-gap: 48px;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-areas:
+      "topbar   topbar"
+      "masthead masthead"
+      "reel     ticket"
+      "lede     ticket"
+      "colophon colophon";
+  }
+  .topbar, .masthead, .colophon { padding-left: 0; padding-right: 0; }
+  .body { display: contents; }
+  .lede { grid-area: lede; max-width: none; padding-top: 26px; }
+  .lede h1 { font-size: clamp(40px, 3.7vw, 56px); }
+  .lede p { max-width: 640px; }
+  .ticket { grid-area: ticket; align-self: center; justify-self: end; width: 100%; max-width: 400px; }
+
+  .reel {
+    position: relative; top: auto; height: auto; align-self: start;
+    overflow: visible; background: none;
+  }
+  .reel__frame {
+    position: relative; inset: auto;
+    border-radius: 18px; overflow: hidden;
+    border: 1px solid rgba(22, 18, 14, .12);
+    box-shadow: 0 18px 44px rgba(22, 18, 14, .14);
+  }
+  .reel__video {
+    width: 100%; height: auto; max-height: 46vh;
+    aspect-ratio: 808 / 392; object-fit: cover;
+  }
+}
 </style>
 </head>
 
@@ -793,7 +851,7 @@ a:hover { color: var(--rust-hi); }
       <video
         class="reel__video"
         poster="assets/reel-poster.jpg"
-        width="864" height="1384"
+        width="808" height="392"
         autoplay muted loop playsinline preload="metadata"
         disablepictureinpicture
         data-i18n-aria="heroAlt"
@@ -801,8 +859,6 @@ a:hover { color: var(--rust-hi); }
         <source src="assets/reel.webm" type="video/webm">
         <source src="assets/reel.mp4" type="video/mp4">
       </video>
-      <div class="reel__scrim" aria-hidden="true"></div>
-      <p class="reel__label" data-i18n="reelLabel">THE LUNCH RUSH</p>
     </div>
   </div>
 
@@ -1209,7 +1265,6 @@ a:hover { color: var(--rust-hi); }
       badgeShort:   'COMING SOON',
       badgeLong:    'COMING SOON · iOS & ANDROID',
       heroAlt:      'Customers crowding the counter of a West African restaurant, waiting for their orders',
-      reelLabel:    'THE LUNCH RUSH',
       /* non-breaking space: "Table 4" must never split across lines */
       headline:     'Table&nbsp;4 is<br class="break-mobile"> still waiting.',
       lede:         'Cook your way across Africa, one country at a time. Start in Senegal, Cameroon and Côte d\u2019Ivoire — juggle thieb, mafé, garba, ndolé and poulet DG in a kitchen that never slows down. More clients, more steps, less time. One missed plate and service falls apart. More countries. More menus. The journey is just getting started.',
@@ -1253,7 +1308,6 @@ a:hover { color: var(--rust-hi); }
       badgeShort:   'OUVERTURE IMMINENTE',
       badgeLong:    'OUVERTURE IMMINENTE · iOS & ANDROID',
       heroAlt:      'Des clients pressés au comptoir d’un restaurant ouest-africain, attendant leur commande',
-      reelLabel:    'LE COUP DE FEU',
       headline:     'La table&nbsp;4<br class="break-mobile"> attend toujours.',
       lede:         'Cuisine à travers l\u2019Afrique, un pays après l\u2019autre. Ça commence au Sénégal, au Cameroun et en Côte d\u2019Ivoire — enchaîne thieb, mafé, garba, ndolé et poulet DG dans une cuisine qui ne ralentit jamais. Plus de clients, plus d\u2019étapes, moins de temps. Un plat manqué et le service s\u2019écroule. D\u2019autres pays. D\u2019autres menus. Le voyage ne fait que commencer.',
       ticketHead:   'TICKET D’ATTENTE',

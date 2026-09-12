@@ -2,3 +2,8 @@
 node_modules/
 *.log
 .claude/
+
+# raw gameplay rushes: source material, never published
+assets/Gameplay paysage/
+# layout mockups: local review only
+mockups/
