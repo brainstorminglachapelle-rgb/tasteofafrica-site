@@ -118,7 +118,7 @@ For ad traffic, which is what this page is for, it does not matter.
 
 ## Tracking
 
-The Meta pixel (`4098993507059369`) is wired in, **behind a consent bar**. Two
+The Meta pixel (`1117915850892952`) is wired in, **behind a consent bar**. Two
 constants at the top of the `<script>` control it: `PIXEL_ID` and `CONSENT_KEY`.
 
 - Nothing loads until the visitor clicks **Accept**. Before that, `fbq` does not
