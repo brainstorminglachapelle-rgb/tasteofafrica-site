@@ -30,7 +30,7 @@
 <link rel="icon" href="assets/favicon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preload" as="image" href="assets/logo.png">
-<link rel="preload" as="image" href="assets/gameplay-2026-09-12-poster.jpg">
+<link rel="preload" as="image" href="assets/gameplay-2026-09-13.avif" type="image/avif">
 
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/bricolage-grotesque-latin.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-mono-500-latin.woff2" crossorigin>
@@ -814,9 +814,13 @@ a:hover { color: var(--rust-hi); }
     border: 1px solid rgba(22, 18, 14, .12);
     box-shadow: 0 18px 44px rgba(22, 18, 14, .14);
   }
+  /* Never crop the game. Capping the HEIGHT with object-fit: cover cut
+     the score bar and BACK TO MAP on short screens; capping the WIDTH
+     instead keeps every pixel and the ticket above the fold. */
+  .reel__frame { max-width: calc(46vh * 808 / 392); }
   .reel__video {
-    width: 100%; height: auto; max-height: 46vh;
-    aspect-ratio: 808 / 392; object-fit: cover;
+    width: 100%; height: auto;
+    aspect-ratio: 808 / 392; object-fit: contain;
   }
 }
 </style>
@@ -848,17 +852,21 @@ a:hover { color: var(--rust-hi); }
 
   <div class="reel">
     <div class="reel__frame">
-      <video
-        class="reel__video"
-        poster="assets/gameplay-2026-09-12-poster.jpg"
-        width="808" height="392"
-        autoplay muted loop playsinline preload="metadata"
-        disablepictureinpicture
-        data-i18n-aria="heroAlt"
-        aria-label="Customers crowding the counter of a West African restaurant, waiting for their orders">
-        <source src="assets/gameplay-2026-09-12.webm" type="video/webm">
-        <source src="assets/gameplay-2026-09-12.mp4" type="video/mp4">
-      </video>
+      <!-- An animated AVIF, not a <video>: an image animation starts on
+           arrival everywhere — no play button, not even in iPhone Low Power
+           Mode, which blocks video autoplay. 752 kB, lighter than the MP4
+           (1.1 MB) and the equivalent GIF (6.0 MB). Browsers without
+           animated AVIF get the still poster. -->
+      <picture>
+        <source srcset="assets/gameplay-2026-09-13.avif" type="image/avif">
+        <img
+          class="reel__video"
+          src="assets/gameplay-2026-09-12-poster.jpg"
+          width="808" height="392"
+          decoding="async" fetchpriority="high"
+          data-i18n-alt="heroAlt"
+          alt="Customers crowding the counter of a West African restaurant, waiting for their orders">
+      </picture>
     </div>
   </div>
 
@@ -1750,20 +1758,5 @@ a:hover { color: var(--rust-hi); }
 })();
 </script>
 
-<script>
-/* the hero loop is decoration: hold it on its poster frame for anyone who
-   asked their system to keep motion down */
-(function () {
-  var reel = document.querySelector('video.reel__video');
-  if (!reel || !window.matchMedia) return;
-  var quiet = window.matchMedia('(prefers-reduced-motion: reduce)');
-  function apply() {
-    if (quiet.matches) { reel.removeAttribute('autoplay'); reel.pause(); }
-    else { reel.play().catch(function () {}); }
-  }
-  apply();
-  if (quiet.addEventListener) quiet.addEventListener('change', apply);
-})();
-</script>
 </body>
 </html>
